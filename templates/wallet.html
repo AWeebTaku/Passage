@@ -1,10 +1,14 @@
 {% extends "base.html" %}
 {% block title %}Traveler wallet{% endblock %}
+{% block role %}wallet{% endblock %}
 {% block content %}
 <div class="mb-8 flex flex-wrap items-end justify-between gap-6">
-  <div>
-    <h1 class="text-3xl font-semibold tracking-tighter">Traveler wallet</h1>
-    <p class="mt-2 text-sm text-muted">Holder <code>{{ holder_did }}</code></p>
+  <div class="flex items-center gap-4">
+    <span class="chip"><i class="ph ph-wallet" aria-hidden="true"></i></span>
+    <div>
+      <h1 class="text-3xl font-semibold tracking-tighter">Traveler wallet</h1>
+      <p class="mt-1 text-sm text-muted">Holder <code>{{ holder_did }}</code></p>
+    </div>
   </div>
   <form method="get" class="flex gap-2 w-full max-w-md">
     <label for="did" class="sr-only">Holder DID</label>
@@ -65,7 +69,7 @@
   {% else %}
   <div class="empty">
     <i class="ph ph-wallet text-3xl block mb-2" aria-hidden="true"></i>
-    This DID holds no credentials yet. <a href="/issuer" class="text-accent underline underline-offset-2">Issue one from the issuer console.</a>
+    This DID holds no credentials yet. <a href="/issuer" class="underline underline-offset-2" style="color:var(--issuer)">Issue one from the issuer console.</a>
   </div>
   {% endfor %}
 </div>

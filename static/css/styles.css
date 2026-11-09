@@ -3,49 +3,75 @@
   Shape rule: cards/panels 12px, buttons/inputs 8px, status badges full pill.
   One accent (teal). Theme follows the OS (prefers-color-scheme).
 */
+/*
+  Brand accent is violet (matches the SSI-ZKP tile on the portfolio). Roles each own a hue:
+  issuer = blue, wallet = pink, customs = cyan. Green = success, red = failure, amber = caution.
+*/
 :root {
-  --bg: #f5f6f6;
-  --surface: #ffffff;
-  --sunken: #eef0f0;
-  --line: #dcdfe0;
-  --fg: #18191b;
-  --muted: #55595e;
-  --accent: #0f766e;
+  --bg: #0e1014;
+  --surface: #151820;
+  --sunken: #11141a;
+  --line: #262a33;
+  --fg: #eceef2;
+  --muted: #9a9fa9;
+  --accent: #8b5cf6;
+  --accent-fill: #7c3aed;
   --on-accent: #ffffff;
-  --accent-soft: #dcf0ec;
-  --bad: #b42318;
-  --bad-soft: #fbe4e1;
-  --warn: #9a5b00;
-  --warn-soft: #fbeccb;
-  --shadow: 0 1px 2px rgb(24 25 27 / .05), 0 8px 24px -12px rgb(24 25 27 / .12);
+  --accent-soft: rgb(139 92 246 / .16);
+  --ok: #4ade80;
+  --ok-soft: rgb(74 222 128 / .14);
+  --bad: #fb8a80;
+  --bad-soft: rgb(251 138 128 / .14);
+  --warn: #f2c15d;
+  --warn-soft: rgb(242 193 93 / .14);
+  --issuer: #60a5fa;   --issuer-fill: #2563eb;  --issuer-soft: rgb(96 165 250 / .15);
+  --wallet: #f472b6;   --wallet-fill: #db2777;  --wallet-soft: rgb(244 114 182 / .15);
+  --customs: #22d3ee;  --customs-fill: #0e7490; --customs-soft: rgb(34 211 238 / .14);
+  --shadow: 0 1px 2px rgb(0 0 0 / .4), 0 8px 24px -12px rgb(0 0 0 / .6);
   --radius: 12px;
   --radius-sm: 8px;
 }
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   :root {
-    --bg: #0d0e0f;
-    --surface: #151617;
-    --sunken: #101112;
-    --line: #27292b;
-    --fg: #ececec;
-    --muted: #a3a7ab;
-    --accent: #2dd4bf;
-    --on-accent: #04201c;
-    --accent-soft: #11302c;
-    --bad: #fb8a80;
-    --bad-soft: #3a1714;
-    --warn: #f2c15d;
-    --warn-soft: #33270a;
-    --shadow: 0 1px 2px rgb(0 0 0 / .4), 0 8px 24px -12px rgb(0 0 0 / .6);
+    --bg: #f4f5f7;
+    --surface: #ffffff;
+    --sunken: #eceef1;
+    --line: #dcdfe5;
+    --fg: #15171c;
+    --muted: #565b66;
+    --accent: #6d28d9;
+    --accent-soft: rgb(124 58 237 / .1);
+    --ok: #15803d;
+    --ok-soft: rgb(21 128 61 / .1);
+    --bad: #b42318;
+    --bad-soft: rgb(180 35 24 / .1);
+    --warn: #9a5b00;
+    --warn-soft: rgb(154 91 0 / .12);
+    --issuer: #1d4ed8;  --issuer-soft: rgb(29 78 216 / .1);
+    --wallet: #be185d;  --wallet-soft: rgb(190 24 93 / .1);
+    --customs: #0e7490; --customs-soft: rgb(14 116 144 / .1);
+    --shadow: 0 1px 2px rgb(21 23 28 / .05), 0 8px 24px -12px rgb(21 23 28 / .14);
   }
 }
+
+/* Page role: set on <body data-role="...">. Falls back to the brand accent. */
+body { --role: var(--accent); --role-fill: var(--accent-fill); --role-soft: var(--accent-soft); }
+body[data-role="issuer"] { --role: var(--issuer); --role-fill: var(--issuer-fill); --role-soft: var(--issuer-soft); }
+body[data-role="wallet"] { --role: var(--wallet); --role-fill: var(--wallet-fill); --role-soft: var(--wallet-soft); }
+body[data-role="customs"] { --role: var(--customs); --role-fill: var(--customs-fill); --role-soft: var(--customs-soft); }
+.text-role { color: var(--role); }
+.chip { display: grid; place-items: center; width: 44px; height: 44px; border-radius: var(--radius); background: var(--role-soft); color: var(--role); font-size: 1.5rem; flex-shrink: 0; }
+.navtab { display: inline-flex; align-items: center; gap: .4rem; padding: .375rem .75rem; border-radius: 8px; color: var(--muted); transition: color .2s, background .2s; }
+.navtab i { color: var(--r); font-size: 1rem; }
+.navtab:hover { color: var(--fg); background: var(--rs); }
+.navtab[aria-current="page"] { color: var(--r); background: var(--rs); font-weight: 500; }
 
 html { color-scheme: light dark; scroll-behavior: smooth; }
 body { background: var(--bg); color: var(--fg); font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
 code, .mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace; }
-code { font-size: .85em; color: var(--accent); }
-::selection { background: var(--accent); color: var(--on-accent); }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+code { font-size: .85em; color: var(--role); }
+::selection { background: var(--accent-fill); color: var(--on-accent); }
+:focus-visible { outline: 2px solid var(--role); outline-offset: 2px; }
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 999px; }
 
@@ -57,22 +83,22 @@ code { font-size: .85em; color: var(--accent); }
   border-radius: var(--radius-sm); padding: .55rem .75rem; font-size: .9rem; transition: border-color .15s;
 }
 .input::placeholder { color: var(--muted); opacity: .8; }
-.input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.input:focus { outline: none; border-color: var(--role); box-shadow: 0 0 0 3px var(--role-soft); }
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: .5rem; white-space: nowrap;
   border-radius: var(--radius-sm); padding: .55rem 1rem; font-size: .9rem; font-weight: 500;
   border: 1px solid var(--line); background: var(--surface); color: var(--fg);
   transition: transform .12s, border-color .15s, background .15s, opacity .15s; cursor: pointer;
 }
-.btn:hover { border-color: var(--accent); }
+.btn:hover { border-color: var(--role); }
 .btn:active { transform: translateY(1px) scale(.98); }
 .btn:disabled { opacity: .5; cursor: wait; }
-.btn-primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.btn-primary { background: var(--role-fill); color: var(--on-accent); border-color: var(--role-fill); }
 .btn-primary:hover { opacity: .9; }
 .btn-danger { color: var(--bad); }
 .btn-danger:hover { border-color: var(--bad); background: var(--bad-soft); }
 .btn-sm { padding: .3rem .7rem; font-size: .8125rem; }
-.badge { display: inline-flex; align-items: center; gap: .3rem; border-radius: 999px; padding: .15rem .6rem; font-size: .75rem; font-weight: 500; background: var(--accent-soft); color: var(--accent); }
+.badge { display: inline-flex; align-items: center; gap: .3rem; border-radius: 999px; padding: .15rem .6rem; font-size: .75rem; font-weight: 500; background: var(--ok-soft); color: var(--ok); }
 .badge-bad { background: var(--bad-soft); color: var(--bad); }
 .badge-warn { background: var(--warn-soft); color: var(--warn); }
 .skeleton { background: linear-gradient(90deg, var(--sunken), var(--line), var(--sunken)); background-size: 200% 100%; border-radius: var(--radius-sm); }
@@ -93,3 +119,4 @@ dialog.modal::backdrop { background: rgb(0 0 0 / .55); }
   .skeleton { animation: shimmer 1.4s linear infinite; }
   @keyframes shimmer { to { background-position: -200% 0; } }
 }
+input[type="file"]::file-selector-button { margin-right: .75rem; border: 0; background: transparent; color: var(--role); font-weight: 500; cursor: pointer; }

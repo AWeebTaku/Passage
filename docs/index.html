@@ -28,7 +28,7 @@
 <link rel="stylesheet" href="static/css/styles.css" />
 <link rel="stylesheet" href="static/css/landing.css" />
 </head>
-<body class="min-h-[100dvh] font-sans">
+<body class="min-h-[100dvh] font-sans" data-role="">
 
 <div class="progress" aria-hidden="true"></div>
 <div id="top-sentinel" class="absolute top-0 h-px w-px" aria-hidden="true"></div>
@@ -70,8 +70,8 @@
       <div id="demo" class="tilt card overflow-hidden">
         <div class="p-5 sm:p-6">
           <div class="flex items-center justify-between text-sm">
-            <span class="flex items-center gap-2 font-medium"><i class="ph ph-wallet text-accent text-lg" aria-hidden="true"></i> In the traveler's wallet</span>
-            <span class="badge" title="Status the issuer committed to">Issued as VALID</span>
+            <span class="flex items-center gap-2 font-medium"><i class="ph ph-wallet text-lg" style="color:var(--wallet)" aria-hidden="true"></i> In the traveler's wallet</span>
+            <span class="badge" style="background:var(--issuer-soft);color:var(--issuer)" title="Status the issuer committed to"><i class="ph ph-stamp" aria-hidden="true"></i>Issued as VALID</span>
           </div>
           <dl class="mt-4 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
             <dt class="text-muted">Name</dt><dd>Lucía Ferreira</dd>
@@ -88,7 +88,7 @@
           </div>
         </div>
         <div class="p-5 sm:p-6">
-          <div class="flex items-center gap-2 text-sm font-medium"><i class="ph ph-shield-check text-accent text-lg" aria-hidden="true"></i> What customs receives</div>
+          <div class="flex items-center gap-2 text-sm font-medium"><i class="ph ph-shield-check text-lg" style="color:var(--customs)" aria-hidden="true"></i> What customs receives</div>
           <dl class="mt-4 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm items-center">
             <dt class="text-muted">Credential</dt><dd class="mono">vc-3f9a1c7e04b2d815</dd>
             <dt class="text-muted">Status</dt><dd id="d-status">VALID</dd>
@@ -114,7 +114,7 @@
         <span class="tl-line absolute left-0 top-0 bottom-0 w-px bg-accent" aria-hidden="true"></span>
         
         <li class="reveal pl-9 relative" style="transition-delay:0ms">
-          <span class="dot absolute -left-4 top-0 grid place-items-center size-8 rounded-full bg-surface border border-line text-accent">
+          <span class="dot absolute -left-4 top-0 grid place-items-center size-8 rounded-full border" style="background:var(--issuer-soft);border-color:var(--issuer);color:var(--issuer)">
             <i class="ph ph-stamp text-base" aria-hidden="true"></i>
           </span>
           <h3 class="text-xl font-semibold tracking-tight">Issue</h3>
@@ -122,7 +122,7 @@
         </li>
         
         <li class="reveal pl-9 relative" style="transition-delay:60ms">
-          <span class="dot absolute -left-4 top-0 grid place-items-center size-8 rounded-full bg-surface border border-line text-accent">
+          <span class="dot absolute -left-4 top-0 grid place-items-center size-8 rounded-full border" style="background:var(--wallet-soft);border-color:var(--wallet);color:var(--wallet)">
             <i class="ph ph-wallet text-base" aria-hidden="true"></i>
           </span>
           <h3 class="text-xl font-semibold tracking-tight">Hold</h3>
@@ -130,7 +130,7 @@
         </li>
         
         <li class="reveal pl-9 relative" style="transition-delay:120ms">
-          <span class="dot absolute -left-4 top-0 grid place-items-center size-8 rounded-full bg-surface border border-line text-accent">
+          <span class="dot absolute -left-4 top-0 grid place-items-center size-8 rounded-full border" style="background:var(--wallet-soft);border-color:var(--wallet);color:var(--wallet)">
             <i class="ph ph-qr-code text-base" aria-hidden="true"></i>
           </span>
           <h3 class="text-xl font-semibold tracking-tight">Present</h3>
@@ -138,7 +138,7 @@
         </li>
         
         <li class="reveal pl-9 relative" style="transition-delay:180ms">
-          <span class="dot absolute -left-4 top-0 grid place-items-center size-8 rounded-full bg-surface border border-line text-accent">
+          <span class="dot absolute -left-4 top-0 grid place-items-center size-8 rounded-full border" style="background:var(--customs-soft);border-color:var(--customs);color:var(--customs)">
             <i class="ph ph-check-circle text-base" aria-hidden="true"></i>
           </span>
           <h3 class="text-xl font-semibold tracking-tight">Verify</h3>
@@ -154,7 +154,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-20 md:py-28">
       <h2 class="reveal text-3xl md:text-4xl font-semibold tracking-tighter leading-tight max-w-[22ch]">Three consoles, one trust model</h2>
       <div class="mt-12 grid md:grid-cols-6 gap-4">
-        <a href="https://github.com/AWeebTaku/Passage#4-run-the-backend" class="reveal lift stamp-card group md:col-span-4 rounded-xl p-8 md:p-10 flex flex-col justify-between min-h-[18rem]" style="background:var(--accent);color:var(--on-accent)">
+        <a href="https://github.com/AWeebTaku/Passage#4-run-the-backend" class="reveal lift stamp-card group md:col-span-4 rounded-xl p-8 md:p-10 flex flex-col justify-between min-h-[18rem]" style="background:var(--issuer-fill);color:#fff">
           <i class="stamp ph ph-stamp text-4xl" aria-hidden="true"></i>
           <div>
             <h3 class="text-2xl font-semibold tracking-tight">Issuer console</h3>
@@ -162,23 +162,23 @@
             <span class="mt-5 inline-flex items-center gap-2 font-medium">Open issuer <i class="ph ph-arrow-right transition group-hover:translate-x-1" aria-hidden="true"></i></span>
           </div>
         </a>
-        <a href="https://github.com/AWeebTaku/Passage#4-run-the-backend" class="reveal lift spot group md:col-span-2 card p-8 flex flex-col justify-between min-h-[18rem]">
-          <i class="ph ph-wallet text-4xl text-accent" aria-hidden="true"></i>
+        <a href="https://github.com/AWeebTaku/Passage#4-run-the-backend" class="reveal lift spot group md:col-span-2 card p-8 flex flex-col justify-between min-h-[18rem]" style="--role-c:var(--wallet);background:linear-gradient(var(--wallet-soft),var(--wallet-soft)),var(--surface)">
+          <i class="ph ph-wallet text-4xl" style="color:var(--wallet)" aria-hidden="true"></i>
           <div>
             <h3 class="text-2xl font-semibold tracking-tight">Traveler wallet</h3>
             <p class="mt-2 text-muted">Inspect held credentials and compute proofs locally.</p>
-            <span class="mt-5 inline-flex items-center gap-2 font-medium text-accent">Open wallet <i class="ph ph-arrow-right transition group-hover:translate-x-1" aria-hidden="true"></i></span>
+            <span class="mt-5 inline-flex items-center gap-2 font-medium" style="color:var(--wallet)">Open wallet <i class="ph ph-arrow-right transition group-hover:translate-x-1" aria-hidden="true"></i></span>
           </div>
         </a>
-        <a href="https://github.com/AWeebTaku/Passage#4-run-the-backend" class="reveal lift spot group md:col-span-6 card p-8 md:p-10 flex flex-wrap items-center justify-between gap-8" style="background:var(--sunken)">
+        <a href="https://github.com/AWeebTaku/Passage#4-run-the-backend" class="reveal lift spot group md:col-span-6 card p-8 md:p-10 flex flex-wrap items-center justify-between gap-8" style="--role-c:var(--customs);background:linear-gradient(var(--customs-soft),var(--customs-soft)),var(--surface)">
           <div class="flex items-start gap-5">
-            <i class="ph ph-shield-check text-4xl text-accent" aria-hidden="true"></i>
+            <i class="ph ph-shield-check text-4xl" style="color:var(--customs)" aria-hidden="true"></i>
             <div>
               <h3 class="text-2xl font-semibold tracking-tight">Customs portal</h3>
               <p class="mt-2 text-muted max-w-[52ch]">Scan a proof QR or paste the values. The result comes straight from the registry contract.</p>
             </div>
           </div>
-          <span class="inline-flex items-center gap-2 font-medium text-accent">Open customs <i class="ph ph-arrow-right transition group-hover:translate-x-1" aria-hidden="true"></i></span>
+          <span class="inline-flex items-center gap-2 font-medium" style="color:var(--customs)">Open customs <i class="ph ph-arrow-right transition group-hover:translate-x-1" aria-hidden="true"></i></span>
         </a>
       </div>
     </div>
@@ -193,7 +193,7 @@
           <thead>
             <tr class="text-left text-muted">
               <th scope="col" class="p-4 font-medium"><span class="sr-only">Data</span></th>
-              <th scope="col" class="p-4 font-medium">Issuer</th><th scope="col" class="p-4 font-medium">Wallet</th><th scope="col" class="p-4 font-medium">Customs</th><th scope="col" class="p-4 font-medium">Chain</th>
+              <th scope="col" class="p-4 font-semibold" style="color:var(--issuer)">Issuer</th><th scope="col" class="p-4 font-semibold" style="color:var(--wallet)">Wallet</th><th scope="col" class="p-4 font-semibold" style="color:var(--customs)">Customs</th><th scope="col" class="p-4 font-semibold" style="color:var(--muted)">Chain</th>
             </tr>
           </thead>
           <tbody>

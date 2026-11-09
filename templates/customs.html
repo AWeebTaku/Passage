@@ -1,9 +1,13 @@
 {% extends "base.html" %}
 {% block title %}Customs portal{% endblock %}
+{% block role %}customs{% endblock %}
 {% block content %}
-<div class="mb-8">
-  <h1 class="text-3xl font-semibold tracking-tighter">Customs portal</h1>
-  <p class="mt-2 text-sm text-muted max-w-[60ch]">Check a blinded proof against on-chain state. No personal data is sent or stored here.</p>
+<div class="mb-8 flex items-center gap-4">
+  <span class="chip"><i class="ph ph-shield-check" aria-hidden="true"></i></span>
+  <div>
+    <h1 class="text-3xl font-semibold tracking-tighter">Customs portal</h1>
+    <p class="mt-1 text-sm text-muted max-w-[60ch]">Check a blinded proof against on-chain state. No personal data is sent or stored here.</p>
+  </div>
 </div>
 
 <dialog id="verify-modal" class="modal text-center">
@@ -24,7 +28,7 @@
       </div>
       <div id="qr-reader" class="hidden max-w-sm mt-3"></div>
       <label class="label mt-4" for="qr-file">Or upload a QR image</label>
-      <input id="qr-file" type="file" accept="image/*" class="input text-xs file:mr-3 file:border-0 file:bg-transparent file:text-accent file:font-medium file:cursor-pointer" />
+      <input id="qr-file" type="file" accept="image/*" class="input text-xs" />
       <p id="scan-status" class="hidden mt-2 text-sm" role="status"></p>
     </div>
 
@@ -73,8 +77,8 @@ const $ = (id) => document.getElementById(id);
 function showVerificationModal(data) {
   const ok = Boolean(data.verified);
   modalIcon.innerHTML = `<i class="ph ${ok ? 'ph-check' : 'ph-x'}" aria-hidden="true"></i>`;
-  modalIcon.style.background = ok ? 'var(--accent-soft)' : 'var(--bad-soft)';
-  modalIcon.style.color = ok ? 'var(--accent)' : 'var(--bad)';
+  modalIcon.style.background = ok ? 'var(--ok-soft)' : 'var(--bad-soft)';
+  modalIcon.style.color = ok ? 'var(--ok)' : 'var(--bad)';
   $('verify-modal-title').textContent = ok ? 'Verification successful' : 'Verification failed';
   $('verify-modal-message').textContent = ok ? 'Traveler may proceed.' : (data.reason || 'Review the submitted proof and try again.');
   modal.showModal();
@@ -85,8 +89,8 @@ function showResult(data) {
   const ok = Boolean(data.verified);
   const banner = $('result-banner');
   banner.textContent = ok ? 'Verified. Admit traveler.' : 'Not verified. Flag for manual review.';
-  banner.style.background = ok ? 'var(--accent-soft)' : 'var(--bad-soft)';
-  banner.style.color = ok ? 'var(--accent)' : 'var(--bad)';
+  banner.style.background = ok ? 'var(--ok-soft)' : 'var(--bad-soft)';
+  banner.style.color = ok ? 'var(--ok)' : 'var(--bad)';
 
   const rows = [
     ['Proof matches commitment', data.proof_valid, true],
@@ -150,7 +154,8 @@ let scanner;
 
 function setScanStatus(message, isError = false) {
   scanStatus.textContent = message;
-  scanStatus.className = 'mt-2 text-sm ' + (isError ? 'text-bad' : 'text-accent');
+  scanStatus.className = 'mt-2 text-sm ' + (isError ? 'text-bad' : '');
+  scanStatus.style.color = isError ? '' : 'var(--ok)';
 }
 
 async function applyQrPayload(raw) {

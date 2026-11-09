@@ -259,6 +259,13 @@ issued status matches the commitment. Motion uses `IntersectionObserver` and CSS
 scroll-driven animations (no scroll listeners) and is disabled under
 `prefers-reduced-motion`.
 
+#### Colours
+
+Brand accent is violet (`#8b5cf6`, matching the portfolio tile). Each role has its
+own hue, used for its nav tab, page header chip and primary button: issuer blue,
+wallet pink, customs cyan. Green means success, red failure, amber caution.
+Tokens live at the top of `static/css/styles.css`.
+
 #### Publishing it on GitHub Pages
 
 Pages is static hosting, so only the landing page is published; the consoles

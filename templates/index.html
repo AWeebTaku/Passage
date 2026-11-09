@@ -42,8 +42,8 @@
       <div id="demo" class="tilt card overflow-hidden">
         <div class="p-5 sm:p-6">
           <div class="flex items-center justify-between text-sm">
-            <span class="flex items-center gap-2 font-medium"><i class="ph ph-wallet text-accent text-lg" aria-hidden="true"></i> In the traveler's wallet</span>
-            <span class="badge" title="Status the issuer committed to">Issued as VALID</span>
+            <span class="flex items-center gap-2 font-medium"><i class="ph ph-wallet text-lg" style="color:var(--wallet)" aria-hidden="true"></i> In the traveler's wallet</span>
+            <span class="badge" style="background:var(--issuer-soft);color:var(--issuer)" title="Status the issuer committed to"><i class="ph ph-stamp" aria-hidden="true"></i>Issued as VALID</span>
           </div>
           <dl class="mt-4 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
             <dt class="text-muted">Name</dt><dd>Lucía Ferreira</dd>
@@ -60,7 +60,7 @@
           </div>
         </div>
         <div class="p-5 sm:p-6">
-          <div class="flex items-center gap-2 text-sm font-medium"><i class="ph ph-shield-check text-accent text-lg" aria-hidden="true"></i> What customs receives</div>
+          <div class="flex items-center gap-2 text-sm font-medium"><i class="ph ph-shield-check text-lg" style="color:var(--customs)" aria-hidden="true"></i> What customs receives</div>
           <dl class="mt-4 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm items-center">
             <dt class="text-muted">Credential</dt><dd class="mono">vc-3f9a1c7e04b2d815</dd>
             <dt class="text-muted">Status</dt><dd id="d-status">VALID</dd>
@@ -84,14 +84,14 @@
       <ol class="relative ml-4 space-y-12">
         <span class="absolute left-0 top-0 bottom-0 w-px bg-line" aria-hidden="true"></span>
         <span class="tl-line absolute left-0 top-0 bottom-0 w-px bg-accent" aria-hidden="true"></span>
-        {% for icon, verb, body in [
-          ('stamp', 'Issue', 'The issuer signs the traveler record and anchors a commitment hash on DidRegistry.sol.'),
-          ('wallet', 'Hold', 'The wallet keeps the full credential and the blinding salt. Neither goes on-chain.'),
-          ('qr-code', 'Present', 'The wallet hashes the claimed status with the salt and shows the result as text or a QR code.'),
-          ('check-circle', 'Verify', 'Customs compares the hash to the commitment and reads revocation state from the chain.'),
+        {% for icon, verb, body, role in [
+          ('stamp', 'Issue', 'The issuer signs the traveler record and anchors a commitment hash on DidRegistry.sol.', 'issuer'),
+          ('wallet', 'Hold', 'The wallet keeps the full credential and the blinding salt. Neither goes on-chain.', 'wallet'),
+          ('qr-code', 'Present', 'The wallet hashes the claimed status with the salt and shows the result as text or a QR code.', 'wallet'),
+          ('check-circle', 'Verify', 'Customs compares the hash to the commitment and reads revocation state from the chain.', 'customs'),
         ] %}
         <li class="reveal pl-9 relative" style="transition-delay:{{ loop.index0 * 60 }}ms">
-          <span class="dot absolute -left-4 top-0 grid place-items-center size-8 rounded-full bg-surface border border-line text-accent">
+          <span class="dot absolute -left-4 top-0 grid place-items-center size-8 rounded-full border" style="background:var(--{{ role }}-soft);border-color:var(--{{ role }});color:var(--{{ role }})">
             <i class="ph ph-{{ icon }} text-base" aria-hidden="true"></i>
           </span>
           <h3 class="text-xl font-semibold tracking-tight">{{ verb }}</h3>
@@ -107,7 +107,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-20 md:py-28">
       <h2 class="reveal text-3xl md:text-4xl font-semibold tracking-tighter leading-tight max-w-[22ch]">Three consoles, one trust model</h2>
       <div class="mt-12 grid md:grid-cols-6 gap-4">
-        <a href="/issuer" class="reveal lift stamp-card group md:col-span-4 rounded-xl p-8 md:p-10 flex flex-col justify-between min-h-[18rem]" style="background:var(--accent);color:var(--on-accent)">
+        <a href="/issuer" class="reveal lift stamp-card group md:col-span-4 rounded-xl p-8 md:p-10 flex flex-col justify-between min-h-[18rem]" style="background:var(--issuer-fill);color:#fff">
           <i class="stamp ph ph-stamp text-4xl" aria-hidden="true"></i>
           <div>
             <h3 class="text-2xl font-semibold tracking-tight">Issuer console</h3>
@@ -115,23 +115,23 @@
             <span class="mt-5 inline-flex items-center gap-2 font-medium">Open issuer <i class="ph ph-arrow-right transition group-hover:translate-x-1" aria-hidden="true"></i></span>
           </div>
         </a>
-        <a href="/wallet" class="reveal lift spot group md:col-span-2 card p-8 flex flex-col justify-between min-h-[18rem]">
-          <i class="ph ph-wallet text-4xl text-accent" aria-hidden="true"></i>
+        <a href="/wallet" class="reveal lift spot group md:col-span-2 card p-8 flex flex-col justify-between min-h-[18rem]" style="--role-c:var(--wallet);background:linear-gradient(var(--wallet-soft),var(--wallet-soft)),var(--surface)">
+          <i class="ph ph-wallet text-4xl" style="color:var(--wallet)" aria-hidden="true"></i>
           <div>
             <h3 class="text-2xl font-semibold tracking-tight">Traveler wallet</h3>
             <p class="mt-2 text-muted">Inspect held credentials and compute proofs locally.</p>
-            <span class="mt-5 inline-flex items-center gap-2 font-medium text-accent">Open wallet <i class="ph ph-arrow-right transition group-hover:translate-x-1" aria-hidden="true"></i></span>
+            <span class="mt-5 inline-flex items-center gap-2 font-medium" style="color:var(--wallet)">Open wallet <i class="ph ph-arrow-right transition group-hover:translate-x-1" aria-hidden="true"></i></span>
           </div>
         </a>
-        <a href="/customs" class="reveal lift spot group md:col-span-6 card p-8 md:p-10 flex flex-wrap items-center justify-between gap-8" style="background:var(--sunken)">
+        <a href="/customs" class="reveal lift spot group md:col-span-6 card p-8 md:p-10 flex flex-wrap items-center justify-between gap-8" style="--role-c:var(--customs);background:linear-gradient(var(--customs-soft),var(--customs-soft)),var(--surface)">
           <div class="flex items-start gap-5">
-            <i class="ph ph-shield-check text-4xl text-accent" aria-hidden="true"></i>
+            <i class="ph ph-shield-check text-4xl" style="color:var(--customs)" aria-hidden="true"></i>
             <div>
               <h3 class="text-2xl font-semibold tracking-tight">Customs portal</h3>
               <p class="mt-2 text-muted max-w-[52ch]">Scan a proof QR or paste the values. The result comes straight from the registry contract.</p>
             </div>
           </div>
-          <span class="inline-flex items-center gap-2 font-medium text-accent">Open customs <i class="ph ph-arrow-right transition group-hover:translate-x-1" aria-hidden="true"></i></span>
+          <span class="inline-flex items-center gap-2 font-medium" style="color:var(--customs)">Open customs <i class="ph ph-arrow-right transition group-hover:translate-x-1" aria-hidden="true"></i></span>
         </a>
       </div>
     </div>
@@ -146,7 +146,7 @@
           <thead>
             <tr class="text-left text-muted">
               <th scope="col" class="p-4 font-medium"><span class="sr-only">Data</span></th>
-              {% for h in ['Issuer', 'Wallet', 'Customs', 'Chain'] %}<th scope="col" class="p-4 font-medium">{{ h }}</th>{% endfor %}
+              {% for h, c in [('Issuer', 'var(--issuer)'), ('Wallet', 'var(--wallet)'), ('Customs', 'var(--customs)'), ('Chain', 'var(--muted)')] %}<th scope="col" class="p-4 font-semibold" style="color:{{ c }}">{{ h }}</th>{% endfor %}
             </tr>
           </thead>
           <tbody>

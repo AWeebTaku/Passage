@@ -28,7 +28,7 @@
 <link rel="stylesheet" href="/static/css/styles.css" />
 {% block head %}{% endblock %}
 </head>
-<body class="min-h-[100dvh] font-sans">
+<body class="min-h-[100dvh] font-sans" data-role="{% block role %}{% endblock %}">
 {% block shell %}
   {% set path = request.url.path %}
   <header class="sticky top-0 z-40 border-b border-line bg-bg">
@@ -37,9 +37,10 @@
         <i class="ph ph-seal-check text-accent text-2xl" aria-hidden="true"></i> Passage
       </a>
       <nav class="flex gap-1 text-sm" aria-label="Primary">
-        {% for href, name in [('/issuer', 'Issuer'), ('/wallet', 'Wallet'), ('/customs', 'Customs')] %}
-        <a href="{{ href }}" {% if path == href %}aria-current="page"{% endif %}
-           class="px-3 py-1.5 rounded-lg transition {{ 'bg-accent-soft text-accent font-medium' if path == href else 'text-muted hover:text-fg' }}">{{ name }}</a>
+        {% for href, name, icon, role in [('/issuer', 'Issuer', 'stamp', 'issuer'), ('/wallet', 'Wallet', 'wallet', 'wallet'), ('/customs', 'Customs', 'shield-check', 'customs')] %}
+        <a href="{{ href }}" {% if path == href %}aria-current="page"{% endif %} class="navtab" style="--r:var(--{{ role }});--rs:var(--{{ role }}-soft)">
+          <i class="ph ph-{{ icon }}" aria-hidden="true"></i>{{ name }}
+        </a>
         {% endfor %}
       </nav>
       {% if chain is defined %}
