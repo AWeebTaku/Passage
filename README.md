@@ -11,7 +11,7 @@ contracts/DidRegistry.sol   Solidity ^0.8.0 registry: DID<->pubkey, revocation l
 deploy.py                   Web3.py deployment engine (compiles + deploys to Ganache)
 backend/                    FastAPI controller (issue / revoke / verify) + chain + crypto + storage
 templates/                  Jinja2 + Tailwind pages (landing, issuer, wallet, customs)
-static/                     Shared CSS design tokens and components
+static/                     Design tokens (styles.css), landing motion (landing.css), favicon
 docs/                       Static landing page for GitHub Pages (generated)
 scripts/build_pages.py      Renders templates/index.html into docs/
 tests/                      Validation and page-render checks
@@ -251,7 +251,15 @@ registered yet.
 
 Open http://127.0.0.1:8000/ for the landing page, which links to the three consoles.
 
-### Landing page on GitHub Pages
+### Landing page
+
+`/` is a marketing page with a live demo: pick a status in the hero card and
+the browser computes the real SHA-256 of `status + salt`, showing why only the
+issued status matches the commitment. Motion uses `IntersectionObserver` and CSS
+scroll-driven animations (no scroll listeners) and is disabled under
+`prefers-reduced-motion`.
+
+#### Publishing it on GitHub Pages
 
 Pages is static hosting, so only the landing page is published; the consoles
 need the backend and a local chain. Console links on the published page point

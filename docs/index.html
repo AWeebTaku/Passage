@@ -26,47 +26,52 @@
 </script>
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
 <link rel="stylesheet" href="static/css/styles.css" />
+<link rel="stylesheet" href="static/css/landing.css" />
 </head>
 <body class="min-h-[100dvh] font-sans">
 
-<header class="sticky top-0 z-40 border-b border-line bg-bg">
+<div class="progress" aria-hidden="true"></div>
+<div id="top-sentinel" class="absolute top-0 h-px w-px" aria-hidden="true"></div>
+<header class="site sticky top-0 z-40 border-b border-line bg-bg">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
     <a href="./" class="flex items-center gap-2 font-semibold tracking-tight text-lg">
       <i class="ph ph-seal-check text-accent text-2xl" aria-hidden="true"></i> Passage
     </a>
     <nav class="hidden md:flex gap-6 text-sm text-muted" aria-label="Page sections">
-      <a href="#how" class="hover:text-fg transition">How it works</a>
-      <a href="#roles" class="hover:text-fg transition">Three roles</a>
-      <a href="#privacy" class="hover:text-fg transition">Who sees what</a>
-      <a href="#limits" class="hover:text-fg transition">Limits</a>
+      <a href="#how" data-sec="how" class="navlink hover:text-fg">How it works</a>
+      <a href="#roles" data-sec="roles" class="navlink hover:text-fg">Three roles</a>
+      <a href="#privacy" data-sec="privacy" class="navlink hover:text-fg">Who sees what</a>
+      <a href="#limits" data-sec="limits" class="navlink hover:text-fg">Limits</a>
     </nav>
-    <a href="https://github.com/AWeebTaku/Passage#4-run-the-backend" class="btn btn-primary">Run it locally</a>
+    <a href="https://github.com/AWeebTaku/Passage#4-run-the-backend" class="btn btn-primary magnetic">Run it locally</a>
   </div>
 </header>
 
 <main>
-  <!-- Hero: asymmetric split -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-12 md:pt-20 pb-16 md:pb-24 grid lg:grid-cols-[1.15fr_1fr] gap-12 lg:gap-16 items-center min-h-[calc(100dvh-4rem)]">
+  <!-- Hero: asymmetric split. The card on the right is a live demo. -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-12 md:pt-20 pb-16 md:pb-24 grid lg:grid-cols-[1.1fr_1fr] gap-12 lg:gap-16 items-center min-h-[calc(100dvh-4rem)]">
     <div>
-      <h1 class="rise text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tighter leading-[1.05]" style="--i:0">
-        Prove your visa status. <span class="text-accent">Reveal nothing else.</span>
+      <h1 class="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tighter leading-[1.1] pb-1" aria-label="Prove your visa status. Reveal nothing else.">
+        <span aria-hidden="true">
+          <span class="w" style="--i:0">Prove</span> <span class="w" style="--i:1">your</span> <span class="w" style="--i:2">visa</span> <span class="w" style="--i:3">status.</span> <br class="hidden sm:block" />
+          <span class="text-accent"><span class="w" style="--i:4">Reveal</span> <span class="w" style="--i:5">nothing</span> <span class="w" style="--i:6">else.</span> </span>
+        </span>
       </h1>
-      <p class="rise mt-6 text-lg text-muted leading-relaxed max-w-[48ch]" style="--i:1">
+      <p class="rise mt-6 text-lg text-muted leading-relaxed max-w-[48ch]" style="--i:8">
         Travelers hold the credential. Customs checks a hash against the chain. No passport data leaves the wallet.
       </p>
-      <div class="rise mt-8 flex flex-wrap gap-3" style="--i:2">
-        <a href="https://github.com/AWeebTaku/Passage#4-run-the-backend" class="btn btn-primary">Run it locally <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
+      <div class="rise mt-8 flex flex-wrap gap-3" style="--i:9">
+        <a href="https://github.com/AWeebTaku/Passage#4-run-the-backend" class="btn btn-primary magnetic">Run it locally <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
         <a href="#how" class="btn">How it works</a>
       </div>
     </div>
 
-    <!-- Sample of what each side holds. Mock data, labeled as such. -->
-    <figure class="rise" style="--i:3">
-      <div class="card overflow-hidden">
+    <figure class="rise" style="--i:6">
+      <div id="demo" class="tilt card overflow-hidden">
         <div class="p-5 sm:p-6">
           <div class="flex items-center justify-between text-sm">
             <span class="flex items-center gap-2 font-medium"><i class="ph ph-wallet text-accent text-lg" aria-hidden="true"></i> In the traveler's wallet</span>
-            <span class="badge">VALID</span>
+            <span class="badge" title="Status the issuer committed to">Issued as VALID</span>
           </div>
           <dl class="mt-4 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
             <dt class="text-muted">Name</dt><dd>Lucía Ferreira</dd>
@@ -74,57 +79,66 @@
             <dt class="text-muted">Salt</dt><dd class="mono text-muted">kept private</dd>
           </dl>
         </div>
-        <div class="flex items-center gap-3 px-5 sm:px-6 py-2.5 text-xs text-muted border-y border-line bg-sunken">
-          <i class="ph ph-arrow-down text-accent text-base" aria-hidden="true"></i>
-          SHA256(status + salt), computed in the browser
+        <div class="flex flex-wrap items-center justify-between gap-3 px-5 sm:px-6 py-3 border-y border-line bg-sunken">
+          <span class="text-xs text-muted">Assert a status. Hashed in your browser.</span>
+          <div class="seg" role="group" aria-label="Status to assert">
+            <button type="button" aria-pressed="true" data-status="VALID">VALID</button>
+            <button type="button" aria-pressed="false" data-status="CONDITIONAL">CONDITIONAL</button>
+            <button type="button" aria-pressed="false" data-status="DENIED">DENIED</button>
+          </div>
         </div>
         <div class="p-5 sm:p-6">
           <div class="flex items-center gap-2 text-sm font-medium"><i class="ph ph-shield-check text-accent text-lg" aria-hidden="true"></i> What customs receives</div>
-          <dl class="mt-4 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
+          <dl class="mt-4 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm items-center">
             <dt class="text-muted">Credential</dt><dd class="mono">vc-3f9a1c7e04b2d815</dd>
-            <dt class="text-muted">Status</dt><dd>VALID</dd>
-            <dt class="text-muted">Proof</dt><dd class="mono truncate">9f2c61ab…e41a07d3</dd>
+            <dt class="text-muted">Status</dt><dd id="d-status">VALID</dd>
+            <dt class="text-muted">Proof</dt><dd id="d-proof" class="mono rounded px-1 -mx-1">eb22e26c…84113f33</dd>
           </dl>
+          <div class="mt-4" aria-live="polite">
+            <span id="d-verdict" class="badge verdict"><i class="ph ph-check" aria-hidden="true"></i><span>Matches the on-chain commitment</span></span>
+          </div>
         </div>
       </div>
-      <figcaption class="mt-3 text-xs text-muted">Sample values for illustration.</figcaption>
+      <figcaption class="mt-3 text-xs text-muted">Sample values. Try another status and watch the proof stop matching.</figcaption>
     </figure>
   </section>
 
-  <!-- How it works: sticky heading + timeline -->
+  <!-- How it works: sticky heading + scroll-drawn timeline -->
   <section id="how" class="border-t border-line">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-20 md:py-28 grid md:grid-cols-[1fr_1.4fr] gap-10 md:gap-20">
       <div class="md:sticky md:top-28 self-start reveal">
         <h2 class="text-3xl md:text-4xl font-semibold tracking-tighter leading-tight">One round trip, from visa desk to border gate</h2>
       </div>
-      <ol class="relative border-l border-line ml-3 space-y-10">
+      <ol class="relative ml-4 space-y-12">
+        <span class="absolute left-0 top-0 bottom-0 w-px bg-line" aria-hidden="true"></span>
+        <span class="tl-line absolute left-0 top-0 bottom-0 w-px bg-accent" aria-hidden="true"></span>
         
-        <li class="reveal pl-8 relative">
-          <span class="absolute -left-[17px] top-0 grid place-items-center size-8 rounded-full bg-surface border border-line text-accent">
+        <li class="reveal pl-9 relative" style="transition-delay:0ms">
+          <span class="dot absolute -left-4 top-0 grid place-items-center size-8 rounded-full bg-surface border border-line text-accent">
             <i class="ph ph-stamp text-base" aria-hidden="true"></i>
           </span>
           <h3 class="text-xl font-semibold tracking-tight">Issue</h3>
           <p class="mt-1.5 text-muted leading-relaxed max-w-[52ch]">The issuer signs the traveler record and anchors a commitment hash on DidRegistry.sol.</p>
         </li>
         
-        <li class="reveal pl-8 relative">
-          <span class="absolute -left-[17px] top-0 grid place-items-center size-8 rounded-full bg-surface border border-line text-accent">
+        <li class="reveal pl-9 relative" style="transition-delay:60ms">
+          <span class="dot absolute -left-4 top-0 grid place-items-center size-8 rounded-full bg-surface border border-line text-accent">
             <i class="ph ph-wallet text-base" aria-hidden="true"></i>
           </span>
           <h3 class="text-xl font-semibold tracking-tight">Hold</h3>
           <p class="mt-1.5 text-muted leading-relaxed max-w-[52ch]">The wallet keeps the full credential and the blinding salt. Neither goes on-chain.</p>
         </li>
         
-        <li class="reveal pl-8 relative">
-          <span class="absolute -left-[17px] top-0 grid place-items-center size-8 rounded-full bg-surface border border-line text-accent">
+        <li class="reveal pl-9 relative" style="transition-delay:120ms">
+          <span class="dot absolute -left-4 top-0 grid place-items-center size-8 rounded-full bg-surface border border-line text-accent">
             <i class="ph ph-qr-code text-base" aria-hidden="true"></i>
           </span>
           <h3 class="text-xl font-semibold tracking-tight">Present</h3>
           <p class="mt-1.5 text-muted leading-relaxed max-w-[52ch]">The wallet hashes the claimed status with the salt and shows the result as text or a QR code.</p>
         </li>
         
-        <li class="reveal pl-8 relative">
-          <span class="absolute -left-[17px] top-0 grid place-items-center size-8 rounded-full bg-surface border border-line text-accent">
+        <li class="reveal pl-9 relative" style="transition-delay:180ms">
+          <span class="dot absolute -left-4 top-0 grid place-items-center size-8 rounded-full bg-surface border border-line text-accent">
             <i class="ph ph-check-circle text-base" aria-hidden="true"></i>
           </span>
           <h3 class="text-xl font-semibold tracking-tight">Verify</h3>
@@ -140,15 +154,15 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-20 md:py-28">
       <h2 class="reveal text-3xl md:text-4xl font-semibold tracking-tighter leading-tight max-w-[22ch]">Three consoles, one trust model</h2>
       <div class="mt-12 grid md:grid-cols-6 gap-4">
-        <a href="https://github.com/AWeebTaku/Passage#4-run-the-backend" class="reveal group md:col-span-4 rounded-xl p-8 md:p-10 flex flex-col justify-between min-h-[18rem] transition hover:-translate-y-0.5" style="background:var(--accent);color:var(--on-accent)">
-          <i class="ph ph-stamp text-4xl" aria-hidden="true"></i>
+        <a href="https://github.com/AWeebTaku/Passage#4-run-the-backend" class="reveal lift stamp-card group md:col-span-4 rounded-xl p-8 md:p-10 flex flex-col justify-between min-h-[18rem]" style="background:var(--accent);color:var(--on-accent)">
+          <i class="stamp ph ph-stamp text-4xl" aria-hidden="true"></i>
           <div>
             <h3 class="text-2xl font-semibold tracking-tight">Issuer console</h3>
             <p class="mt-2 max-w-[44ch] opacity-90">Sign visa credentials, anchor them on-chain, and revoke them when status changes.</p>
             <span class="mt-5 inline-flex items-center gap-2 font-medium">Open issuer <i class="ph ph-arrow-right transition group-hover:translate-x-1" aria-hidden="true"></i></span>
           </div>
         </a>
-        <a href="https://github.com/AWeebTaku/Passage#4-run-the-backend" class="reveal group md:col-span-2 card p-8 flex flex-col justify-between min-h-[18rem] transition hover:-translate-y-0.5">
+        <a href="https://github.com/AWeebTaku/Passage#4-run-the-backend" class="reveal lift spot group md:col-span-2 card p-8 flex flex-col justify-between min-h-[18rem]">
           <i class="ph ph-wallet text-4xl text-accent" aria-hidden="true"></i>
           <div>
             <h3 class="text-2xl font-semibold tracking-tight">Traveler wallet</h3>
@@ -156,7 +170,7 @@
             <span class="mt-5 inline-flex items-center gap-2 font-medium text-accent">Open wallet <i class="ph ph-arrow-right transition group-hover:translate-x-1" aria-hidden="true"></i></span>
           </div>
         </a>
-        <a href="https://github.com/AWeebTaku/Passage#4-run-the-backend" class="reveal group md:col-span-6 card p-8 md:p-10 flex flex-wrap items-center justify-between gap-8 transition hover:-translate-y-0.5" style="background:var(--sunken)">
+        <a href="https://github.com/AWeebTaku/Passage#4-run-the-backend" class="reveal lift spot group md:col-span-6 card p-8 md:p-10 flex flex-wrap items-center justify-between gap-8" style="background:var(--sunken)">
           <div class="flex items-start gap-5">
             <i class="ph ph-shield-check text-4xl text-accent" aria-hidden="true"></i>
             <div>
@@ -184,32 +198,34 @@
           </thead>
           <tbody>
             
-            <tr class="">
+            
+            <tr class="transition-colors hover:bg-sunken ">
               <th scope="row" class="p-4 text-left font-medium">Name and passport number</th>
               
               <td class="p-4 ">
-                <i class="ph ph-check text-accent text-lg" aria-hidden="true"></i><span class="sr-only">Yes</span>
+                <i class="mark ph ph-check text-accent text-lg inline-block" style="--n:0" aria-hidden="true"></i><span class="sr-only">Yes</span>
                 
               </td>
               
               <td class="p-4 ">
-                <i class="ph ph-check text-accent text-lg" aria-hidden="true"></i><span class="sr-only">Yes</span>
+                <i class="mark ph ph-check text-accent text-lg inline-block" style="--n:1" aria-hidden="true"></i><span class="sr-only">Yes</span>
                 
               </td>
               
               <td class="p-4 text-muted">
-                <i class="ph ph-minus text-lg" aria-hidden="true"></i><span class="sr-only">No</span>
+                <i class="mark ph ph-minus text-lg inline-block" style="--n:2" aria-hidden="true"></i><span class="sr-only">No</span>
                 
               </td>
               
               <td class="p-4 text-muted">
-                <i class="ph ph-minus text-lg" aria-hidden="true"></i><span class="sr-only">No</span>
+                <i class="mark ph ph-minus text-lg inline-block" style="--n:3" aria-hidden="true"></i><span class="sr-only">No</span>
                 
               </td>
               
             </tr>
             
-            <tr class="border-t border-line">
+            
+            <tr class="transition-colors hover:bg-sunken border-t border-line">
               <th scope="row" class="p-4 text-left font-medium">Blinding salt</th>
               
               <td class="p-4 ">
@@ -217,37 +233,38 @@
               </td>
               
               <td class="p-4 ">
-                <i class="ph ph-check text-accent text-lg" aria-hidden="true"></i><span class="sr-only">Yes</span>
+                <i class="mark ph ph-check text-accent text-lg inline-block" style="--n:5" aria-hidden="true"></i><span class="sr-only">Yes</span>
                 
               </td>
               
               <td class="p-4 text-muted">
-                <i class="ph ph-minus text-lg" aria-hidden="true"></i><span class="sr-only">No</span>
+                <i class="mark ph ph-minus text-lg inline-block" style="--n:6" aria-hidden="true"></i><span class="sr-only">No</span>
                 
               </td>
               
               <td class="p-4 text-muted">
-                <i class="ph ph-minus text-lg" aria-hidden="true"></i><span class="sr-only">No</span>
+                <i class="mark ph ph-minus text-lg inline-block" style="--n:7" aria-hidden="true"></i><span class="sr-only">No</span>
                 
               </td>
               
             </tr>
             
-            <tr class="border-t border-line">
+            
+            <tr class="transition-colors hover:bg-sunken border-t border-line">
               <th scope="row" class="p-4 text-left font-medium">Status commitment</th>
               
               <td class="p-4 ">
-                <i class="ph ph-check text-accent text-lg" aria-hidden="true"></i><span class="sr-only">Yes</span>
+                <i class="mark ph ph-check text-accent text-lg inline-block" style="--n:8" aria-hidden="true"></i><span class="sr-only">Yes</span>
                 
               </td>
               
               <td class="p-4 ">
-                <i class="ph ph-check text-accent text-lg" aria-hidden="true"></i><span class="sr-only">Yes</span>
+                <i class="mark ph ph-check text-accent text-lg inline-block" style="--n:9" aria-hidden="true"></i><span class="sr-only">Yes</span>
                 
               </td>
               
               <td class="p-4 ">
-                <i class="ph ph-check text-accent text-lg" aria-hidden="true"></i><span class="sr-only">Yes</span>
+                <i class="mark ph ph-check text-accent text-lg inline-block" style="--n:10" aria-hidden="true"></i><span class="sr-only">Yes</span>
                 
               </td>
               
@@ -257,26 +274,27 @@
               
             </tr>
             
-            <tr class="border-t border-line">
+            
+            <tr class="transition-colors hover:bg-sunken border-t border-line">
               <th scope="row" class="p-4 text-left font-medium">Revocation state</th>
               
               <td class="p-4 ">
-                <i class="ph ph-check text-accent text-lg" aria-hidden="true"></i><span class="sr-only">Yes</span>
+                <i class="mark ph ph-check text-accent text-lg inline-block" style="--n:12" aria-hidden="true"></i><span class="sr-only">Yes</span>
                 
               </td>
               
               <td class="p-4 ">
-                <i class="ph ph-check text-accent text-lg" aria-hidden="true"></i><span class="sr-only">Yes</span>
+                <i class="mark ph ph-check text-accent text-lg inline-block" style="--n:13" aria-hidden="true"></i><span class="sr-only">Yes</span>
                 
               </td>
               
               <td class="p-4 ">
-                <i class="ph ph-check text-accent text-lg" aria-hidden="true"></i><span class="sr-only">Yes</span>
+                <i class="mark ph ph-check text-accent text-lg inline-block" style="--n:14" aria-hidden="true"></i><span class="sr-only">Yes</span>
                 
               </td>
               
               <td class="p-4 ">
-                <i class="ph ph-check text-accent text-lg" aria-hidden="true"></i><span class="sr-only">Yes</span>
+                <i class="mark ph ph-check text-accent text-lg inline-block" style="--n:15" aria-hidden="true"></i><span class="sr-only">Yes</span>
                 
               </td>
               
@@ -302,9 +320,9 @@
   </section>
 
   <section class="border-t border-line">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-20 md:py-24 flex flex-wrap items-center justify-between gap-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-20 md:py-24 flex flex-wrap items-center justify-between gap-6 reveal">
       <h2 class="text-3xl md:text-4xl font-semibold tracking-tighter leading-tight max-w-[20ch]">Issue a credential and check it at the gate</h2>
-      <a href="https://github.com/AWeebTaku/Passage#4-run-the-backend" class="btn btn-primary">Run it locally <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
+      <a href="https://github.com/AWeebTaku/Passage#4-run-the-backend" class="btn btn-primary magnetic">Run it locally <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
     </div>
   </section>
 </main>
@@ -321,14 +339,92 @@
 </footer>
 
 <script>
-// Scroll reveal: IntersectionObserver, no scroll listener. Reduced-motion CSS leaves .reveal visible.
 (() => {
-  const els = document.querySelectorAll('.reveal');
-  if (!('IntersectionObserver' in window)) { els.forEach((el) => el.classList.add('in')); return; }
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-  }, { threshold: 0.15 });
-  els.forEach((el) => io.observe(el));
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches && !reduce;
+  const io = (cb, opts) => new IntersectionObserver(cb, opts);
+
+  // Scroll reveal. IntersectionObserver only, no scroll listener.
+  const reveals = document.querySelectorAll('.reveal');
+  if (reduce || !('IntersectionObserver' in window)) reveals.forEach((el) => el.classList.add('in'));
+  else {
+    const o = io((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); o.unobserve(e.target); } }), { threshold: 0.15 });
+    reveals.forEach((el) => o.observe(el));
+  }
+
+  // Header gains a frosted edge once the page leaves the top.
+  const header = document.querySelector('header.site');
+  io(([e]) => header.toggleAttribute('data-scrolled', !e.isIntersecting)).observe(document.getElementById('top-sentinel'));
+
+  // Nav highlights the section in view.
+  const links = [...document.querySelectorAll('.navlink')];
+  const sections = links.map((l) => document.getElementById(l.dataset.sec));
+  const spy = io((es) => es.forEach((e) => {
+    if (e.isIntersecting) links.forEach((l) => l.setAttribute('aria-current', String(l.dataset.sec === e.target.id)));
+  }), { rootMargin: '-45% 0px -50% 0px' });
+  sections.forEach((s) => s && spy.observe(s));
+
+  // Pointer effects: card tilt, spotlight, magnetic buttons. Fine pointers only.
+  if (fine) {
+    const demo = document.getElementById('demo');
+    demo.addEventListener('pointermove', (e) => {
+      const r = demo.getBoundingClientRect();
+      demo.style.setProperty('--ry', ((e.clientX - r.left) / r.width - 0.5) * 6 + 'deg');
+      demo.style.setProperty('--rx', ((e.clientY - r.top) / r.height - 0.5) * -6 + 'deg');
+    });
+    demo.addEventListener('pointerleave', () => { demo.style.setProperty('--rx', '0deg'); demo.style.setProperty('--ry', '0deg'); });
+
+    document.querySelectorAll('.spot').forEach((el) => el.addEventListener('pointermove', (e) => {
+      const r = el.getBoundingClientRect();
+      el.style.setProperty('--mx', e.clientX - r.left + 'px');
+      el.style.setProperty('--my', e.clientY - r.top + 'px');
+    }));
+
+    document.querySelectorAll('.magnetic').forEach((el) => {
+      el.addEventListener('pointermove', (e) => {
+        const r = el.getBoundingClientRect();
+        el.style.transform = `translate(${(e.clientX - r.left - r.width / 2) * 0.18}px, ${(e.clientY - r.top - r.height / 2) * 0.25}px)`;
+      });
+      el.addEventListener('pointerleave', () => { el.style.transform = ''; });
+    });
+  }
+
+  // Hero demo: real SHA-256 of status + salt, compared with the committed value.
+  const SALT = 'demo-salt-7c41e9', ISSUED = 'VALID';
+  const buttons = [...document.querySelectorAll('.seg button')];
+  const $ = (id) => document.getElementById(id);
+  const subtle = window.crypto && window.crypto.subtle;
+  if (!subtle) { buttons.forEach((b) => (b.disabled = true)); return; }
+
+  const sha = async (s) => [...new Uint8Array(await subtle.digest('SHA-256', new TextEncoder().encode(s)))].map((b) => b.toString(16).padStart(2, '0')).join('');
+  let token = 0;
+  function scramble(el, text) {
+    el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+    if (reduce) { el.textContent = text; return; }
+    const id = ++token, t0 = performance.now(), hex = '0123456789abcdef';
+    (function tick(now) {
+      if (id !== token) return;
+      const t = Math.min(1, (now - t0) / 450), fixed = Math.floor(t * text.length);
+      el.textContent = text.slice(0, fixed) + [...text.slice(fixed)].map((c) => (c === '…' ? c : hex[Math.random() * 16 | 0])).join('');
+      if (t < 1) requestAnimationFrame(tick);
+    })(t0);
+  }
+
+  let commitment;
+  sha(ISSUED + SALT).then((h) => { commitment = h; });
+  buttons.forEach((btn) => btn.addEventListener('click', async () => {
+    const status = btn.dataset.status;
+    buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+    const h = await sha(status + SALT);
+    $('d-status').textContent = status;
+    scramble($('d-proof'), h.slice(0, 8) + '…' + h.slice(-8));
+    const ok = h === (commitment || await sha(ISSUED + SALT));
+    const v = $('d-verdict');
+    v.className = 'badge verdict ' + (ok ? '' : 'badge-bad');
+    v.querySelector('i').className = 'ph ' + (ok ? 'ph-check' : 'ph-x');
+    v.querySelector('span').textContent = ok ? 'Matches the on-chain commitment' : 'Proof rejected: does not match';
+    if (!ok && !reduce) { v.classList.remove('shake'); void v.offsetWidth; v.classList.add('shake'); }
+  }));
 })();
 </script>
 

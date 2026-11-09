@@ -13,7 +13,13 @@ build/*
 # Runtime wallet and registry data can contain personal data.
 storage/*
 !storage/.gitkeep
+
 # Local tooling / session files.
 .claude_session
 .impeccable/
 .pytest_cache/
+.python-version
+.vscode/
+.idea/
+.DS_Store
+*.log
