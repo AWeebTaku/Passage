@@ -1,80 +1,76 @@
 {% extends "base.html" %}
-{% block title %}Traveler Wallet{% endblock %}
+{% block title %}Traveler wallet{% endblock %}
 {% block content %}
-<h1 class="text-2xl font-bold mb-1">Traveler Wallet</h1>
-<p class="text-slate-400 text-sm mb-6">Holder DID: <code class="text-accent2">{{ holder_did }}</code></p>
-
-<form method="get" class="flex gap-2 mb-8 max-w-md">
-  <input name="did" placeholder="did:ssi:holder:demo-traveler"
-         class="flex-1 bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-accent2" />
-  <button class="px-4 py-2 bg-accent2 text-slate-900 rounded-md text-sm font-medium">Load wallet</button>
-</form>
+<div class="mb-8 flex flex-wrap items-end justify-between gap-6">
+  <div>
+    <h1 class="text-3xl font-semibold tracking-tighter">Traveler wallet</h1>
+    <p class="mt-2 text-sm text-muted">Holder <code>{{ holder_did }}</code></p>
+  </div>
+  <form method="get" class="flex gap-2 w-full max-w-md">
+    <label for="did" class="sr-only">Holder DID</label>
+    <input id="did" name="did" class="input mono" placeholder="did:ssi:holder:demo-traveler" value="{{ holder_did }}" autocomplete="off" />
+    <button class="btn btn-primary shrink-0">Load wallet</button>
+  </form>
+</div>
 
 <div class="space-y-6">
   {% for c in credentials %}
-  <div class="rounded-2xl border border-slate-800 bg-panel p-6">
-    <div class="flex justify-between items-start mb-4">
-      <div>
-        <div class="font-mono text-sm text-accent">{{ c.credential_id }}</div>
-        <div class="text-xs text-slate-500">issued by {{ c.issuer_did }} &middot; expires {{ c.expiry_at }}</div>
+  <article class="cred card p-6">
+    <div class="flex flex-wrap justify-between items-start gap-3 mb-5">
+      <div class="min-w-0">
+        <div class="mono text-sm">{{ c.credential_id }}</div>
+        <div class="text-xs text-muted mt-1">Issued by {{ c.issuer_did }}, expires {{ c.expiry_at[:10] }}</div>
       </div>
-      <span class="text-xs px-2 py-0.5 rounded-full {{ 'bg-rose-900 text-rose-300' if c.visa_status == 'REVOKED' else 'bg-emerald-900 text-emerald-300' }}">
-        {{ c.visa_status }}
-      </span>
+      <span class="badge {{ 'badge-bad' if c.display_status in ('REVOKED', 'EXPIRED', 'DENIED') else ('badge-warn' if c.display_status == 'CONDITIONAL') }}">{{ c.display_status }}</span>
     </div>
 
-    <div class="grid sm:grid-cols-2 gap-3 text-sm mb-4">
-      <div><span class="text-slate-500">Name:</span> {{ c.traveler_name }}</div>
-      <div><span class="text-slate-500">Passport:</span> {{ c.passport_number }}</div>
-      <div><span class="text-slate-500">Nationality:</span> {{ c.nationality }}</div>
-      <div class="truncate"><span class="text-slate-500">Credential hash:</span> <span class="font-mono text-xs">{{ c.credential_hash }}</span></div>
-    </div>
+    <dl class="grid sm:grid-cols-2 gap-x-8 gap-y-3 text-sm mb-5">
+      <div><dt class="text-muted text-xs">Name</dt><dd>{{ c.traveler_name }}</dd></div>
+      <div><dt class="text-muted text-xs">Passport</dt><dd class="mono">{{ c.passport_number }}</dd></div>
+      <div><dt class="text-muted text-xs">Nationality</dt><dd>{{ c.nationality }}</dd></div>
+      <div class="min-w-0"><dt class="text-muted text-xs">Credential hash</dt><dd class="mono text-xs truncate" title="{{ c.credential_hash }}">{{ c.credential_hash }}</dd></div>
+    </dl>
 
-    <details class="mb-4">
-      <summary class="cursor-pointer text-xs text-slate-400">Show blinding entropy factor (salt) -- never share this</summary>
-      <div class="mt-2 text-xs font-mono bg-slate-950 border border-slate-800 rounded-md p-2 break-all">{{ c.salt }}</div>
+    <details class="mb-5 text-sm">
+      <summary class="cursor-pointer text-muted hover:text-fg transition">Show blinding salt (never share)</summary>
+      <div class="mt-2 mono text-xs bg-sunken border border-line rounded-lg p-3 break-all">{{ c.salt }}</div>
     </details>
 
-    <div class="border-t border-slate-800 pt-4">
-      <p class="text-xs text-slate-400 mb-2">
-        Generate a selective-disclosure proof to present at customs. This proves the asserted
-        status matches your issuer's commitment <em>without revealing the salt or any other field</em>.
-        The hash below is computed entirely in your browser -- the salt never leaves this page.
+    <div class="border-t border-line pt-5">
+      <p class="text-sm text-muted mb-4 max-w-[70ch]">
+        Compute a proof for customs. It is hashed in this browser, so the salt and your personal details never leave the page.
       </p>
-      <div class="flex gap-2 items-end flex-wrap">
-        <div class="flex-1 min-w-[160px]">
-          <label class="text-xs text-slate-500">Assert status</label>
-          <select class="assert-status w-full mt-1 bg-slate-900 border border-slate-700 rounded-md px-2 py-1.5 text-sm">
-            <option value="VALID">VALID</option>
-            <option value="CONDITIONAL">CONDITIONAL</option>
-            <option value="DENIED">DENIED</option>
-            <option value="REVOKED">REVOKED</option>
+      <div class="flex flex-wrap gap-3 items-end">
+        <div class="w-48">
+          <label class="label">Assert status</label>
+          <select class="assert-status input">
+            <option>VALID</option><option>CONDITIONAL</option><option>DENIED</option><option>REVOKED</option>
           </select>
         </div>
-        <button class="gen-proof-btn px-4 py-1.5 bg-accent text-slate-900 rounded-md text-sm font-medium hover:opacity-90 transition"
-                data-salt="{{ c.salt }}" data-credential-id="{{ c.credential_id }}">
-          Compute proof (client-side)
+        <button class="gen-proof-btn btn btn-primary" data-salt="{{ c.salt }}" data-credential-id="{{ c.credential_id }}">
+          <i class="ph ph-fingerprint" aria-hidden="true"></i> Compute proof
         </button>
-        <button type="button" class="show-qr-btn hidden px-2.5 py-1.5 border border-slate-700 rounded-md text-xs text-slate-300 hover:border-accent2 hover:text-accent2 transition" aria-label="Show QR proof">
-          <span aria-hidden="true">QR</span>
-        </button>
+        <button type="button" class="show-qr-btn btn hidden"><i class="ph ph-qr-code" aria-hidden="true"></i> Show QR</button>
       </div>
-      <div class="proof-output hidden mt-3 text-xs bg-slate-950 border border-slate-800 rounded-md p-3 space-y-2"></div>
-      <div class="qr-modal hidden fixed inset-0 z-50 items-center justify-center bg-slate-950/80 p-4" role="dialog" aria-modal="true" aria-label="QR proof">
-        <div class="relative w-full max-w-sm rounded-2xl border border-slate-700 bg-panel p-6 text-center shadow-2xl">
-          <button type="button" class="close-qr-btn absolute right-4 top-3 text-2xl leading-none text-slate-400 hover:text-white" aria-label="Close QR proof">&times;</button>
-          <h2 class="font-semibold mb-1">Customs proof QR</h2>
-          <p class="text-xs text-slate-400 mb-4">Have Customs scan this code.</p>
-          <div class="qr-code inline-block bg-white p-2 rounded-md"></div>
-        </div>
-      </div>
+      <div class="proof-output hidden mt-4 text-sm bg-sunken border border-line rounded-lg p-4 space-y-2" aria-live="polite"></div>
+
+      <dialog class="qr-modal modal text-center">
+        <h2 class="font-semibold tracking-tight">Customs proof QR</h2>
+        <p class="text-sm text-muted mt-1 mb-4">Have customs scan this code.</p>
+        <div class="qr-code inline-block bg-white p-3 rounded-lg"></div>
+        <div class="mt-5"><button type="button" class="close-qr-btn btn w-full">Close</button></div>
+      </dialog>
     </div>
-  </div>
+  </article>
   {% else %}
-  <p class="text-slate-500">No credentials held by this DID yet. Issue one from the Issuer Console.</p>
+  <div class="empty">
+    <i class="ph ph-wallet text-3xl block mb-2" aria-hidden="true"></i>
+    This DID holds no credentials yet. <a href="/issuer" class="text-accent underline underline-offset-2">Issue one from the issuer console.</a>
+  </div>
   {% endfor %}
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 function sha256HexFallback(message) {
   const bytes = new TextEncoder().encode(message);
@@ -125,7 +121,6 @@ function sha256HexFallback(message) {
   }
   return hash.map(value => (value >>> 0).toString(16).padStart(8, '0')).join('');
 }
-
 async function sha256Hex(message) {
   const enc = new TextEncoder().encode(message);
   if (window.crypto && window.crypto.subtle) {
@@ -135,50 +130,6 @@ async function sha256Hex(message) {
   return sha256HexFallback(message);
 }
 
-document.querySelectorAll('.gen-proof-btn').forEach((btn) => {
-  btn.addEventListener('click', async () => {
-    const card = btn.closest('.rounded-2xl');
-    const status = card.querySelector('.assert-status').value;
-    const salt = btn.dataset.salt;
-    const credId = btn.dataset.credentialId;
-    const proof = await sha256Hex(status + salt);
-    const out = card.querySelector('.proof-output');
-    out.classList.remove('hidden');
-    out.innerHTML = '';
-    [
-      ['credential_id', credId],
-      ['claimed_status', status],
-      ['proof_hash', proof],
-    ].forEach(([label, value]) => {
-      const row = document.createElement('div');
-      row.className = 'flex items-center gap-2';
-      const text = document.createElement('span');
-      text.className = 'flex-1 font-mono break-all';
-      text.textContent = label + ':';
-      if (label === 'claimed_status') {
-        const badge = document.createElement('span');
-        badge.className = 'px-2 py-0.5 rounded-full text-xs font-sans bg-emerald-900 text-emerald-300';
-        badge.textContent = value;
-        text.append(' ', badge);
-        row.append(text);
-        out.append(row);
-        return;
-      }
-      const copyBtn = document.createElement('button');
-      copyBtn.type = 'button';
-      copyBtn.className = 'copy-value-btn shrink-0 px-2 py-1 border border-slate-700 rounded text-xs text-slate-300 hover:border-accent2 hover:text-accent2 transition';
-      copyBtn.textContent = 'Copy';
-      copyBtn.dataset.copyValue = value;
-      row.append(text, copyBtn);
-      out.append(row);
-    });
-    const note = document.createElement('div');
-    note.className = 'text-slate-500 pt-1';
-    note.textContent = 'Copy the three values into the Customs Portal. The salt itself is never transmitted.';
-    out.append(note);
-  });
-});
-
 async function copyValue(value) {
   if (navigator.clipboard && window.isSecureContext) {
     await navigator.clipboard.writeText(value);
@@ -187,8 +138,7 @@ async function copyValue(value) {
   const input = document.createElement('textarea');
   input.value = value;
   input.setAttribute('readonly', '');
-  input.style.position = 'fixed';
-  input.style.opacity = '0';
+  input.style.cssText = 'position:fixed;opacity:0';
   document.body.append(input);
   input.select();
   const copied = document.execCommand('copy');
@@ -196,64 +146,68 @@ async function copyValue(value) {
   if (!copied) throw new Error('Clipboard copy failed');
 }
 
-document.addEventListener('click', async (event) => {
-  const btn = event.target.closest('.copy-value-btn');
-  if (!btn) return;
-  const originalText = btn.textContent;
-  try {
-    await copyValue(btn.dataset.copyValue);
-    btn.textContent = 'Copied';
-  } catch (error) {
-    btn.textContent = 'Select manually';
-  }
-  setTimeout(() => { btn.textContent = originalText; }, 1500);
-});
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script>
+function proofRow(label, value) {
+  const row = document.createElement('div');
+  row.className = 'flex items-center gap-3';
+  const key = document.createElement('span');
+  key.className = 'text-muted w-32 shrink-0';
+  key.textContent = label;
+  const val = document.createElement('span');
+  val.className = 'mono text-xs flex-1 break-all';
+  val.textContent = value;
+  const copy = document.createElement('button');
+  copy.type = 'button';
+  copy.className = 'copy-value-btn btn btn-sm shrink-0';
+  copy.textContent = 'Copy';
+  copy.dataset.copyValue = value;
+  row.append(key, val, copy);
+  return row;
+}
+
 document.querySelectorAll('.gen-proof-btn').forEach((btn) => {
   btn.addEventListener('click', async () => {
-    const card = btn.closest('.rounded-2xl');
+    const card = btn.closest('.cred');
     const status = card.querySelector('.assert-status').value;
-    const salt = btn.dataset.salt;
     const credId = btn.dataset.credentialId;
-    const proof = await sha256Hex(status + salt);
-    const qrButton = card.querySelector('.show-qr-btn');
-    const qrModal = card.querySelector('.qr-modal');
-    const qrCode = qrModal.querySelector('.qr-code');
-    qrCode.innerHTML = '';
+    const proof = await sha256Hex(status + btn.dataset.salt);
+
+    const out = card.querySelector('.proof-output');
+    out.classList.remove('hidden');
+    out.replaceChildren(
+      proofRow('credential_id', credId),
+      proofRow('claimed_status', status),
+      proofRow('proof_hash', proof),
+    );
+    const note = document.createElement('p');
+    note.className = 'text-xs text-muted pt-1';
+    note.textContent = 'Copy these into the customs portal, or show the QR code.';
+    out.append(note);
+
+    const qrCode = card.querySelector('.qr-code');
+    qrCode.replaceChildren();
     if (window.QRCode) {
       new QRCode(qrCode, {
         text: JSON.stringify({ version: 1, credential_id: credId, claimed_status: status, proof_hash: proof }),
-        width: 180,
-        height: 180,
-        correctLevel: QRCode.CorrectLevel.M,
+        width: 192, height: 192, correctLevel: QRCode.CorrectLevel.M,
       });
-      qrButton.classList.remove('hidden');
+      card.querySelector('.show-qr-btn').classList.remove('hidden');
     }
   });
 });
 
-document.addEventListener('click', (event) => {
-  const showButton = event.target.closest('.show-qr-btn');
-  if (showButton) {
-    showButton.closest('.rounded-2xl').querySelector('.qr-modal').classList.replace('hidden', 'flex');
+document.addEventListener('click', async (event) => {
+  const copyBtn = event.target.closest('.copy-value-btn');
+  if (copyBtn) {
+    const original = copyBtn.textContent;
+    try { await copyValue(copyBtn.dataset.copyValue); copyBtn.textContent = 'Copied'; }
+    catch (error) { copyBtn.textContent = 'Select manually'; }
+    setTimeout(() => { copyBtn.textContent = original; }, 1500);
     return;
   }
-  const closeButton = event.target.closest('.close-qr-btn');
-  if (closeButton) {
-    closeButton.closest('.qr-modal').classList.replace('flex', 'hidden');
-    return;
-  }
-  if (event.target.classList.contains('qr-modal')) {
-    event.target.classList.replace('flex', 'hidden');
-  }
-});
-
-document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape') {
-    document.querySelectorAll('.qr-modal.flex').forEach((modal) => modal.classList.replace('flex', 'hidden'));
-  }
+  const show = event.target.closest('.show-qr-btn');
+  if (show) { show.closest('.cred').querySelector('.qr-modal').showModal(); return; }
+  const close = event.target.closest('.close-qr-btn');
+  if (close) close.closest('dialog').close();
 });
 </script>
 {% endblock %}

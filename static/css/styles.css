@@ -1,24 +1,95 @@
-/* Small overrides on top of Tailwind's CDN build */
-code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+/*
+  Design tokens + shared components.
+  Shape rule: cards/panels 12px, buttons/inputs 8px, status badges full pill.
+  One accent (teal). Theme follows the OS (prefers-color-scheme).
+*/
+:root {
+  --bg: #f5f6f6;
+  --surface: #ffffff;
+  --sunken: #eef0f0;
+  --line: #dcdfe0;
+  --fg: #18191b;
+  --muted: #55595e;
+  --accent: #0f766e;
+  --on-accent: #ffffff;
+  --accent-soft: #dcf0ec;
+  --bad: #b42318;
+  --bad-soft: #fbe4e1;
+  --warn: #9a5b00;
+  --warn-soft: #fbeccb;
+  --shadow: 0 1px 2px rgb(24 25 27 / .05), 0 8px 24px -12px rgb(24 25 27 / .12);
+  --radius: 12px;
+  --radius-sm: 8px;
 }
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-thumb {
-  background: #1e293b;
-  border-radius: 999px;
-}
-.toast {
-  animation: toast-in 180ms ease-out;
-}
-@keyframes toast-in {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0d0e0f;
+    --surface: #151617;
+    --sunken: #101112;
+    --line: #27292b;
+    --fg: #ececec;
+    --muted: #a3a7ab;
+    --accent: #2dd4bf;
+    --on-accent: #04201c;
+    --accent-soft: #11302c;
+    --bad: #fb8a80;
+    --bad-soft: #3a1714;
+    --warn: #f2c15d;
+    --warn-soft: #33270a;
+    --shadow: 0 1px 2px rgb(0 0 0 / .4), 0 8px 24px -12px rgb(0 0 0 / .6);
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+}
+
+html { color-scheme: light dark; scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--fg); font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+code, .mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace; }
+code { font-size: .85em; color: var(--accent); }
+::selection { background: var(--accent); color: var(--on-accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 999px; }
+
+/* Components */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+.label { display: block; font-size: .8125rem; font-weight: 500; color: var(--muted); margin-bottom: .375rem; }
+.input {
+  width: 100%; background: var(--sunken); color: var(--fg); border: 1px solid var(--line);
+  border-radius: var(--radius-sm); padding: .55rem .75rem; font-size: .9rem; transition: border-color .15s;
+}
+.input::placeholder { color: var(--muted); opacity: .8; }
+.input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem; white-space: nowrap;
+  border-radius: var(--radius-sm); padding: .55rem 1rem; font-size: .9rem; font-weight: 500;
+  border: 1px solid var(--line); background: var(--surface); color: var(--fg);
+  transition: transform .12s, border-color .15s, background .15s, opacity .15s; cursor: pointer;
+}
+.btn:hover { border-color: var(--accent); }
+.btn:active { transform: translateY(1px) scale(.98); }
+.btn:disabled { opacity: .5; cursor: wait; }
+.btn-primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.btn-primary:hover { opacity: .9; }
+.btn-danger { color: var(--bad); }
+.btn-danger:hover { border-color: var(--bad); background: var(--bad-soft); }
+.btn-sm { padding: .3rem .7rem; font-size: .8125rem; }
+.badge { display: inline-flex; align-items: center; gap: .3rem; border-radius: 999px; padding: .15rem .6rem; font-size: .75rem; font-weight: 500; background: var(--accent-soft); color: var(--accent); }
+.badge-bad { background: var(--bad-soft); color: var(--bad); }
+.badge-warn { background: var(--warn-soft); color: var(--warn); }
+.skeleton { background: linear-gradient(90deg, var(--sunken), var(--line), var(--sunken)); background-size: 200% 100%; border-radius: var(--radius-sm); }
+.empty { border: 1px dashed var(--line); border-radius: var(--radius); padding: 2rem 1.5rem; text-align: center; color: var(--muted); font-size: .9rem; }
+dialog.modal { background: var(--surface); color: var(--fg); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.5rem; max-width: 24rem; width: calc(100% - 2rem); box-shadow: var(--shadow); }
+dialog.modal::backdrop { background: rgb(0 0 0 / .55); }
+
+/* Toasts */
+.toast { animation: toast-in 180ms ease-out; }
+@keyframes toast-in { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+
+/* Landing motion: only when the user has not asked for reduced motion */
+@media (prefers-reduced-motion: no-preference) {
+  .rise { opacity: 0; transform: translateY(16px); animation: rise .7s cubic-bezier(.16, 1, .3, 1) forwards; animation-delay: calc(var(--i, 0) * 90ms); }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity .7s cubic-bezier(.16, 1, .3, 1), transform .7s cubic-bezier(.16, 1, .3, 1); }
+  .reveal.in { opacity: 1; transform: none; }
+  .skeleton { animation: shimmer 1.4s linear infinite; }
+  @keyframes shimmer { to { background-position: -200% 0; } }
 }

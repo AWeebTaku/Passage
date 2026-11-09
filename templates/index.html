@@ -1,41 +1,207 @@
 {% extends "base.html" %}
-{% block title %}Navigation Hub{% endblock %}
-{% block content %}
-<div class="text-center mb-14">
-  <h1 class="text-4xl font-bold tracking-tight mb-3">Cross-Border Travel Verification</h1>
-  <p class="text-slate-400 max-w-2xl mx-auto">
-    A self-sovereign identity system where visa credentials are issued off-chain,
-    anchored on an EVM ledger, held by the traveler, and checked at the border
-    using hash-commitment proofs -- no raw personal data ever
-    touches the verifier or the chain.
-  </p>
-</div>
+{% block title %}Prove visa status without sharing passport data{% endblock %}
+{% block shell %}
+<header class="sticky top-0 z-40 border-b border-line bg-bg">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+    <a href="/" class="flex items-center gap-2 font-semibold tracking-tight text-lg">
+      <i class="ph ph-seal-check text-accent text-2xl" aria-hidden="true"></i> Passage
+    </a>
+    <nav class="hidden md:flex gap-6 text-sm text-muted" aria-label="Page sections">
+      <a href="#how" class="hover:text-fg transition">How it works</a>
+      <a href="#roles" class="hover:text-fg transition">Three roles</a>
+      <a href="#privacy" class="hover:text-fg transition">Who sees what</a>
+      <a href="#limits" class="hover:text-fg transition">Limits</a>
+    </nav>
+    <a href="/issuer" class="btn btn-primary">Try the demo</a>
+  </div>
+</header>
 
-<div class="grid md:grid-cols-3 gap-6 mb-14">
-  <a href="/issuer" class="group rounded-2xl border border-slate-800 bg-panel p-6 hover:border-accent transition">
-    <div class="w-10 h-10 rounded-lg bg-accent/10 text-accent flex items-center justify-center mb-4 font-bold">I</div>
-    <h2 class="text-lg font-semibold mb-2">Issuer Console</h2>
-    <p class="text-sm text-slate-400">Issue signed visa credentials, anchor them on-chain, and broadcast revocations.</p>
-  </a>
-  <a href="/wallet" class="group rounded-2xl border border-slate-800 bg-panel p-6 hover:border-accent2 transition">
-    <div class="w-10 h-10 rounded-lg bg-accent2/10 text-accent2 flex items-center justify-center mb-4 font-bold">W</div>
-    <h2 class="text-lg font-semibold mb-2">Traveler Wallet</h2>
-    <p class="text-sm text-slate-400">Inspect held credentials, blinding salts, and generate selective-disclosure proofs.</p>
-  </a>
-  <a href="/customs" class="group rounded-2xl border border-slate-800 bg-panel p-6 hover:border-emerald-400 transition">
-    <div class="w-10 h-10 rounded-lg bg-emerald-400/10 text-emerald-300 flex items-center justify-center mb-4 font-bold">C</div>
-    <h2 class="text-lg font-semibold mb-2">Customs Portal</h2>
-    <p class="text-sm text-slate-400">Submit a credential ID and blinded proof to verify status against on-chain state.</p>
-  </a>
-</div>
+<main>
+  <!-- Hero: asymmetric split -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 pt-12 md:pt-20 pb-16 md:pb-24 grid lg:grid-cols-[1.15fr_1fr] gap-12 lg:gap-16 items-center min-h-[calc(100dvh-4rem)]">
+    <div>
+      <h1 class="rise text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tighter leading-[1.05]" style="--i:0">
+        Prove your visa status. <span class="text-accent">Reveal nothing else.</span>
+      </h1>
+      <p class="rise mt-6 text-lg text-muted leading-relaxed max-w-[48ch]" style="--i:1">
+        Travelers hold the credential. Customs checks a hash against the chain. No passport data leaves the wallet.
+      </p>
+      <div class="rise mt-8 flex flex-wrap gap-3" style="--i:2">
+        <a href="/issuer" class="btn btn-primary">Try the demo <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
+        <a href="#how" class="btn">How it works</a>
+      </div>
+    </div>
 
-<div class="rounded-2xl border border-slate-800 bg-panel p-6">
-  <h3 class="font-semibold mb-3 text-sm text-slate-300">Trust flow</h3>
-  <ol class="text-sm text-slate-400 space-y-2 list-decimal list-inside">
-    <li><span class="text-slate-200">Issuer</span> signs traveler data (HMAC-SHA256) and anchors a commitment hash on <code class="text-accent">DidRegistry.sol</code>.</li>
-    <li><span class="text-slate-200">Holder</span> wallet stores the full credential locally, including the blinding salt.</li>
-    <li><span class="text-slate-200">Holder</span> presents only <code class="text-accent2">SHA256(status || salt)</code> -- never the salt or PII.</li>
-    <li><span class="text-slate-200">Verifier</span> (Customs) checks the commitment and <code class="text-accent">isRevoked()</code> on-chain. This is a hash-commitment demonstration, not a zk-SNARK.</li>
-  </ol>
-</div>
+    <!-- Sample of what each side holds. Mock data, labeled as such. -->
+    <figure class="rise" style="--i:3">
+      <div class="card overflow-hidden">
+        <div class="p-5 sm:p-6">
+          <div class="flex items-center justify-between text-sm">
+            <span class="flex items-center gap-2 font-medium"><i class="ph ph-wallet text-accent text-lg" aria-hidden="true"></i> In the traveler's wallet</span>
+            <span class="badge">VALID</span>
+          </div>
+          <dl class="mt-4 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
+            <dt class="text-muted">Name</dt><dd>Lucía Ferreira</dd>
+            <dt class="text-muted">Passport</dt><dd class="mono">P4471982</dd>
+            <dt class="text-muted">Salt</dt><dd class="mono text-muted">kept private</dd>
+          </dl>
+        </div>
+        <div class="flex items-center gap-3 px-5 sm:px-6 py-2.5 text-xs text-muted border-y border-line bg-sunken">
+          <i class="ph ph-arrow-down text-accent text-base" aria-hidden="true"></i>
+          SHA256(status + salt), computed in the browser
+        </div>
+        <div class="p-5 sm:p-6">
+          <div class="flex items-center gap-2 text-sm font-medium"><i class="ph ph-shield-check text-accent text-lg" aria-hidden="true"></i> What customs receives</div>
+          <dl class="mt-4 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
+            <dt class="text-muted">Credential</dt><dd class="mono">vc-3f9a1c7e04b2d815</dd>
+            <dt class="text-muted">Status</dt><dd>VALID</dd>
+            <dt class="text-muted">Proof</dt><dd class="mono truncate">9f2c61ab…e41a07d3</dd>
+          </dl>
+        </div>
+      </div>
+      <figcaption class="mt-3 text-xs text-muted">Sample values for illustration.</figcaption>
+    </figure>
+  </section>
+
+  <!-- How it works: sticky heading + timeline -->
+  <section id="how" class="border-t border-line">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-20 md:py-28 grid md:grid-cols-[1fr_1.4fr] gap-10 md:gap-20">
+      <div class="md:sticky md:top-28 self-start reveal">
+        <h2 class="text-3xl md:text-4xl font-semibold tracking-tighter leading-tight">One round trip, from visa desk to border gate</h2>
+      </div>
+      <ol class="relative border-l border-line ml-3 space-y-10">
+        {% for icon, verb, body in [
+          ('stamp', 'Issue', 'The issuer signs the traveler record and anchors a commitment hash on DidRegistry.sol.'),
+          ('wallet', 'Hold', 'The wallet keeps the full credential and the blinding salt. Neither goes on-chain.'),
+          ('qr-code', 'Present', 'The wallet hashes the claimed status with the salt and shows the result as text or a QR code.'),
+          ('check-circle', 'Verify', 'Customs compares the hash to the commitment and reads revocation state from the chain.'),
+        ] %}
+        <li class="reveal pl-8 relative">
+          <span class="absolute -left-[17px] top-0 grid place-items-center size-8 rounded-full bg-surface border border-line text-accent">
+            <i class="ph ph-{{ icon }} text-base" aria-hidden="true"></i>
+          </span>
+          <h3 class="text-xl font-semibold tracking-tight">{{ verb }}</h3>
+          <p class="mt-1.5 text-muted leading-relaxed max-w-[52ch]">{{ body }}</p>
+        </li>
+        {% endfor %}
+      </ol>
+    </div>
+  </section>
+
+  <!-- Roles: bento of exactly three cells -->
+  <section id="roles" class="border-t border-line">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-20 md:py-28">
+      <h2 class="reveal text-3xl md:text-4xl font-semibold tracking-tighter leading-tight max-w-[22ch]">Three consoles, one trust model</h2>
+      <div class="mt-12 grid md:grid-cols-6 gap-4">
+        <a href="/issuer" class="reveal group md:col-span-4 rounded-xl p-8 md:p-10 flex flex-col justify-between min-h-[18rem] transition hover:-translate-y-0.5" style="background:var(--accent);color:var(--on-accent)">
+          <i class="ph ph-stamp text-4xl" aria-hidden="true"></i>
+          <div>
+            <h3 class="text-2xl font-semibold tracking-tight">Issuer console</h3>
+            <p class="mt-2 max-w-[44ch] opacity-90">Sign visa credentials, anchor them on-chain, and revoke them when status changes.</p>
+            <span class="mt-5 inline-flex items-center gap-2 font-medium">Open issuer <i class="ph ph-arrow-right transition group-hover:translate-x-1" aria-hidden="true"></i></span>
+          </div>
+        </a>
+        <a href="/wallet" class="reveal group md:col-span-2 card p-8 flex flex-col justify-between min-h-[18rem] transition hover:-translate-y-0.5">
+          <i class="ph ph-wallet text-4xl text-accent" aria-hidden="true"></i>
+          <div>
+            <h3 class="text-2xl font-semibold tracking-tight">Traveler wallet</h3>
+            <p class="mt-2 text-muted">Inspect held credentials and compute proofs locally.</p>
+            <span class="mt-5 inline-flex items-center gap-2 font-medium text-accent">Open wallet <i class="ph ph-arrow-right transition group-hover:translate-x-1" aria-hidden="true"></i></span>
+          </div>
+        </a>
+        <a href="/customs" class="reveal group md:col-span-6 card overflow-hidden grid md:grid-cols-2 transition hover:-translate-y-0.5">
+          <div class="p-8 md:p-10 flex flex-col justify-between gap-8">
+            <i class="ph ph-shield-check text-4xl text-accent" aria-hidden="true"></i>
+            <div>
+              <h3 class="text-2xl font-semibold tracking-tight">Customs portal</h3>
+              <p class="mt-2 text-muted max-w-[44ch]">Scan a proof QR or paste the values. The result comes straight from the registry contract.</p>
+              <span class="mt-5 inline-flex items-center gap-2 font-medium text-accent">Open customs <i class="ph ph-arrow-right transition group-hover:translate-x-1" aria-hidden="true"></i></span>
+            </div>
+          </div>
+          <img src="https://picsum.photos/seed/airport-passport-control/960/540" width="960" height="540" loading="lazy"
+               alt="Travelers queueing at an airport passport control hall" class="w-full h-56 md:h-full object-cover" />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Who sees what: compact matrix -->
+  <section id="privacy" class="border-t border-line">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-20 md:py-28">
+      <h2 class="reveal text-3xl md:text-4xl font-semibold tracking-tighter leading-tight max-w-[24ch]">Who sees what</h2>
+      <div class="reveal mt-10 card overflow-x-auto">
+        <table class="w-full text-sm min-w-[36rem]">
+          <thead>
+            <tr class="text-left text-muted">
+              <th scope="col" class="p-4 font-medium"><span class="sr-only">Data</span></th>
+              {% for h in ['Issuer', 'Wallet', 'Customs', 'Chain'] %}<th scope="col" class="p-4 font-medium">{{ h }}</th>{% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for row, cells in [
+              ('Name and passport number', ['Yes', 'Yes', 'No', 'No']),
+              ('Blinding salt', ['At issuance only', 'Yes', 'No', 'No']),
+              ('Status commitment', ['Yes', 'Yes', 'Yes', 'Hash only']),
+              ('Revocation state', ['Yes', 'Yes', 'Yes', 'Yes']),
+            ] %}
+            <tr class="{{ 'border-t border-line' if not loop.first }}">
+              <th scope="row" class="p-4 text-left font-medium">{{ row }}</th>
+              {% for c in cells %}
+              <td class="p-4 {{ 'text-muted' if c == 'No' else '' }}">
+                {% if c == 'Yes' %}<i class="ph ph-check text-accent text-lg" aria-hidden="true"></i><span class="sr-only">Yes</span>
+                {% elif c == 'No' %}<i class="ph ph-minus text-lg" aria-hidden="true"></i><span class="sr-only">No</span>
+                {% else %}{{ c }}{% endif %}
+              </td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Limits: honest plain-text band -->
+  <section id="limits" class="border-t border-line bg-sunken">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 py-20 md:py-28 reveal">
+      <h2 class="text-3xl md:text-4xl font-semibold tracking-tighter leading-tight">What this demo is not</h2>
+      <p class="mt-6 text-muted leading-relaxed">
+        Credentials are signed with HMAC-SHA256, a symmetric MAC. A production system would use ECDSA or EdDSA so verifiers need only a public key.
+      </p>
+      <p class="mt-4 text-muted leading-relaxed">
+        The status proof is a hash commitment, not a zk-SNARK. It hides the salt and the personal data, but it is not a general zero-knowledge circuit.
+      </p>
+    </div>
+  </section>
+
+  <section class="border-t border-line">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-20 md:py-24 flex flex-wrap items-center justify-between gap-6">
+      <h2 class="text-3xl md:text-4xl font-semibold tracking-tighter leading-tight max-w-[20ch]">Issue a credential and check it at the gate</h2>
+      <a href="/issuer" class="btn btn-primary">Try the demo <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
+    </div>
+  </section>
+</main>
+
+<footer class="border-t border-line">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex flex-wrap items-center justify-between gap-4 text-sm text-muted">
+    <span>Passage, a self-sovereign identity demo on an EVM registry.</span>
+    <nav class="flex gap-5" aria-label="Consoles">
+      <a href="/issuer" class="hover:text-fg transition">Issuer</a>
+      <a href="/wallet" class="hover:text-fg transition">Wallet</a>
+      <a href="/customs" class="hover:text-fg transition">Customs</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+// Scroll reveal: IntersectionObserver, no scroll listener. Reduced-motion CSS leaves .reveal visible.
+(() => {
+  const els = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) { els.forEach((el) => el.classList.add('in')); return; }
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.15 });
+  els.forEach((el) => io.observe(el));
+})();
+</script>
 {% endblock %}

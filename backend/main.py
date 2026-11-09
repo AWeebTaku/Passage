@@ -49,6 +49,20 @@ app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), na
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 
 
+VISA_STATUSES = {"VALID", "CONDITIONAL", "DENIED"}
+MAX_VALIDITY_DAYS = 365
+
+
+def _is_expired(expiry_at: str) -> bool:
+    try:
+        expiry = datetime.datetime.fromisoformat(expiry_at.replace("Z", "+00:00"))
+        if expiry.tzinfo is None:
+            expiry = expiry.replace(tzinfo=datetime.timezone.utc)
+        return datetime.datetime.now(datetime.timezone.utc) > expiry
+    except Exception:
+        return False
+
+
 def _chain_status() -> dict:
     try:
         connected = chain.get_w3().is_connected()
@@ -64,7 +78,7 @@ def _chain_status() -> dict:
 
 @app.get("/", response_class=HTMLResponse)
 def landing(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request, "chain": _chain_status()})
+    return templates.TemplateResponse(request, "index.html", {"chain": _chain_status()})
 
 
 @app.get("/issuer", response_class=HTMLResponse)
@@ -73,24 +87,30 @@ def issuer_console(request: Request):
     issued = [v for v in registry.values() if v.get("issuer_did") == ISSUER_DID]
     issued.sort(key=lambda r: r.get("issued_at", ""), reverse=True)
     return templates.TemplateResponse(
+        request,
         "issuer.html",
-        {"request": request, "chain": _chain_status(), "issuer_did": ISSUER_DID, "issued": issued},
+        {"chain": _chain_status(), "issuer_did": ISSUER_DID, "issued": issued},
     )
 
 
 @app.get("/wallet", response_class=HTMLResponse)
 def traveler_wallet(request: Request, did: str = DEFAULT_HOLDER_DID):
     wallets = storage.read_wallets()
+    did = did.strip() or DEFAULT_HOLDER_DID
     credentials = list(reversed(wallets.get(did, [])))
+    for c in credentials:
+        # REVOKED is already written into visa_status by /revoke-visa.
+        c["display_status"] = "EXPIRED" if c["visa_status"] != "REVOKED" and _is_expired(c["expiry_at"]) else c["visa_status"]
     return templates.TemplateResponse(
+        request,
         "wallet.html",
-        {"request": request, "chain": _chain_status(), "holder_did": did, "credentials": credentials},
+        {"chain": _chain_status(), "holder_did": did, "credentials": credentials},
     )
 
 
 @app.get("/customs", response_class=HTMLResponse)
 def customs_portal(request: Request):
-    return templates.TemplateResponse("customs.html", {"request": request, "chain": _chain_status()})
+    return templates.TemplateResponse(request, "customs.html", {"chain": _chain_status()})
 
 
 # ---------------------------------------------------------------------------
@@ -145,6 +165,13 @@ def issue_visa(
     writes the full credential (including the blinding salt) to holder wallet
     storage only.
     """
+    holder_did, traveler_name, passport_number = holder_did.strip(), traveler_name.strip(), passport_number.strip()
+    if not (holder_did.startswith("did:") and traveler_name and passport_number):
+        raise HTTPException(status_code=422, detail="Holder DID (did:...), name and passport number are required.")
+    if visa_status not in VISA_STATUSES:
+        raise HTTPException(status_code=422, detail="Visa status must be VALID, CONDITIONAL or DENIED.")
+    if not 1 <= validity_days <= MAX_VALIDITY_DAYS:
+        raise HTTPException(status_code=422, detail=f"Validity must be between 1 and {MAX_VALIDITY_DAYS} days.")
     try:
         registry = storage.read_registry()
         if any(
@@ -260,6 +287,8 @@ def revoke_visa(credential_id: str = Form(...)):
         record = registry.get(credential_id)
         if not record:
             raise HTTPException(status_code=404, detail="Unknown credential_id")
+        if record.get("revoked"):
+            raise HTTPException(status_code=409, detail="Credential is already revoked")
 
         credential_hash = bytes.fromhex(record["credential_hash"].replace("0x", ""))
         tx_info = chain.revoke_credential(record["issuer_did"], credential_hash)
@@ -329,14 +358,7 @@ def verify_border(
         anchored_onchain = chain.is_anchored(credential_hash)
         revoked_onchain = chain.is_revoked(credential_hash)
 
-        expired = False
-        try:
-            expiry = datetime.datetime.fromisoformat(record["expiry_at"].replace("Z", ""))
-            if expiry.tzinfo is None:
-                expiry = expiry.replace(tzinfo=datetime.timezone.utc)
-            expired = datetime.datetime.now(datetime.timezone.utc) > expiry
-        except Exception:
-            pass
+        expired = _is_expired(record["expiry_at"])
 
         result.update(
             {

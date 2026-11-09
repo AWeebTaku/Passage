@@ -3,53 +3,68 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>{% block title %}SSI / ZKP Border Verification{% endblock %}</title>
+<title>{% block title %}Passage{% endblock %} | Passage</title>
+<meta name="description" content="Passage: verify visa status at the border with a hash commitment anchored on an EVM registry. No passport data leaves the traveler's wallet." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
   tailwind.config = {
     theme: {
       extend: {
+        fontFamily: { sans: ['Instrument Sans', 'ui-sans-serif', 'system-ui', 'sans-serif'], mono: ['JetBrains Mono', 'ui-monospace', 'monospace'] },
         colors: {
-          ink: '#0b1120',
-          panel: '#111827',
-          accent: '#38bdf8',
-          accent2: '#a78bfa',
-        }
-      }
-    }
+          bg: 'var(--bg)', surface: 'var(--surface)', sunken: 'var(--sunken)', line: 'var(--line)',
+          fg: 'var(--fg)', muted: 'var(--muted)', accent: 'var(--accent)', 'accent-soft': 'var(--accent-soft)',
+          bad: 'var(--bad)', 'on-accent': 'var(--on-accent)',
+        },
+      },
+    },
   }
 </script>
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
 <link rel="stylesheet" href="/static/css/styles.css" />
 </head>
-<body class="bg-ink text-slate-100 min-h-screen font-sans">
-  <header class="border-b border-slate-800 bg-panel/60 backdrop-blur sticky top-0 z-10">
-    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-      <a href="/" class="flex items-center gap-2 font-semibold text-lg">
-        <span class="w-2.5 h-2.5 rounded-full bg-accent shadow-[0_0_12px_rgba(56,189,248,0.8)]"></span>
-        SSI / ZKP Border Verification
+<body class="min-h-[100dvh] font-sans">
+{% block shell %}
+  {% set path = request.url.path %}
+  <header class="sticky top-0 z-40 border-b border-line bg-bg">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+      <a href="/" class="flex items-center gap-2 font-semibold tracking-tight text-lg">
+        <i class="ph ph-seal-check text-accent text-2xl" aria-hidden="true"></i> Passage
       </a>
-      <nav class="flex gap-1 text-sm">
-        <a href="/issuer" class="px-3 py-1.5 rounded-md hover:bg-slate-800 transition">Issuer</a>
-        <a href="/wallet" class="px-3 py-1.5 rounded-md hover:bg-slate-800 transition">Wallet</a>
-        <a href="/customs" class="px-3 py-1.5 rounded-md hover:bg-slate-800 transition">Customs</a>
+      <nav class="flex gap-1 text-sm" aria-label="Primary">
+        {% for href, name in [('/issuer', 'Issuer'), ('/wallet', 'Wallet'), ('/customs', 'Customs')] %}
+        <a href="{{ href }}" {% if path == href %}aria-current="page"{% endif %}
+           class="px-3 py-1.5 rounded-lg transition {{ 'bg-accent-soft text-accent font-medium' if path == href else 'text-muted hover:text-fg' }}">{{ name }}</a>
+        {% endfor %}
       </nav>
+      {% if chain is defined %}
+      {% if chain.connected and chain.deployed %}
+      <span class="badge hidden sm:inline-flex" title="Ganache reachable, DidRegistry deployed">
+        <i class="ph ph-link" aria-hidden="true"></i> Chain ready
+      </span>
+      {% else %}
+      <span class="badge badge-warn hidden sm:inline-flex">
+        <i class="ph ph-warning" aria-hidden="true"></i>
+        {{ 'Ganache unreachable' if not chain.connected else 'Registry not deployed' }}
+      </span>
+      {% endif %}
+      {% endif %}
     </div>
-    {% if chain is defined %}
-    <div class="max-w-6xl mx-auto px-6 pb-3 flex gap-3 text-xs">
-      <span class="px-2 py-0.5 rounded-full {{ 'bg-emerald-900 text-emerald-300' if chain.connected else 'bg-rose-900 text-rose-300' }}">
-        Ganache: {{ 'connected' if chain.connected else 'unreachable' }}
-      </span>
-      <span class="px-2 py-0.5 rounded-full {{ 'bg-emerald-900 text-emerald-300' if chain.deployed else 'bg-amber-900 text-amber-300' }}">
-        DidRegistry: {{ 'deployed' if chain.deployed else 'not deployed -- run python main.py' }}
-      </span>
+    {% if chain is defined and not (chain.connected and chain.deployed) %}
+    <div class="sm:hidden border-t border-line px-4 py-2 text-xs" style="background:var(--warn-soft);color:var(--warn)">
+      {{ 'Ganache unreachable. Start it, then run python main.py.' if not chain.connected else 'DidRegistry not deployed. Run python main.py.' }}
     </div>
     {% endif %}
   </header>
-  <main class="max-w-6xl mx-auto px-6 py-10">
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-10">
     {% block content %}{% endblock %}
   </main>
-  <footer class="max-w-6xl mx-auto px-6 py-10 text-xs text-slate-500">
-    Demo system -- tripartite trust model (Issuer &middot; Holder Wallet &middot; Verifier) anchored to an EVM DID registry.
+  <footer class="max-w-6xl mx-auto px-4 sm:px-6 py-10 text-xs text-muted">
+    Demo system: issuer, holder wallet and verifier, anchored to an EVM DID registry.
   </footer>
+{% endblock %}
 </body>
 </html>

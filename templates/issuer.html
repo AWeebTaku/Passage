@@ -1,240 +1,218 @@
 {% extends "base.html" %}
-{% block title %}Issuer Console{% endblock %}
+{% block title %}Issuer console{% endblock %}
 {% block content %}
-<h1 class="text-2xl font-bold mb-1">Issuer Console</h1>
-<p class="text-slate-400 text-sm mb-8">Issuer DID: <code class="text-accent">{{ issuer_did }}</code></p>
+<div class="mb-8">
+  <h1 class="text-3xl font-semibold tracking-tighter">Issuer console</h1>
+  <p class="mt-2 text-sm text-muted">Issuing as <code>{{ issuer_did }}</code></p>
+</div>
 
-<div class="grid lg:grid-cols-2 gap-8">
-  <section class="rounded-2xl border border-slate-800 bg-panel p-6">
-    <h2 class="font-semibold mb-4">Issue Visa Credential</h2>
-    <form id="issue-form" class="space-y-3">
+{% set countries = [('IN','India'),('AU','Australia'),('BR','Brazil'),('CA','Canada'),('CN','China'),('FR','France'),('DE','Germany'),('ID','Indonesia'),('IT','Italy'),('JP','Japan'),('MY','Malaysia'),('MX','Mexico'),('NG','Nigeria'),('PK','Pakistan'),('RU','Russia'),('SG','Singapore'),('ZA','South Africa'),('KR','South Korea'),('ES','Spain'),('LK','Sri Lanka'),('CH','Switzerland'),('TH','Thailand'),('AE','United Arab Emirates'),('GB','United Kingdom'),('US','United States'),('VN','Vietnam')] %}
+
+<div class="grid lg:grid-cols-[1fr_1.1fr] gap-6 items-start">
+  <section class="card p-6">
+    <h2 class="text-lg font-semibold tracking-tight mb-5">Issue a visa credential</h2>
+    <form id="issue-form" class="space-y-4" novalidate>
       <div>
-        <label class="text-xs text-slate-400">Holder DID</label>
-        <div class="flex gap-2 mt-1">
-          <input name="holder_did" required placeholder="did:ssi:holder:demo-traveler"
-                 class="min-w-0 flex-1 bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-accent" />
-          <button type="button" id="check-holder-button"
-                  class="shrink-0 rounded-md border border-slate-700 px-3 py-2 text-sm hover:border-accent hover:text-accent transition disabled:opacity-50 disabled:cursor-wait">
-            Check
-          </button>
+        <label class="label" for="holder_did">Holder DID</label>
+        <div class="flex gap-2">
+          <input id="holder_did" name="holder_did" required class="input mono min-w-0 flex-1" placeholder="did:ssi:holder:demo-traveler" autocomplete="off" />
+          <button type="button" id="check-holder-button" class="btn shrink-0">Look up</button>
+        </div>
+        <p id="holder-hint" class="mt-1.5 text-xs text-muted">Look up a returning holder to fill in their saved details.</p>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div>
+          <label class="label" for="traveler_name">Traveler name</label>
+          <input id="traveler_name" name="traveler_name" required class="input" placeholder="Lucía Ferreira" />
+        </div>
+        <div>
+          <label class="label" for="passport_number">Passport number</label>
+          <input id="passport_number" name="passport_number" required class="input mono" placeholder="P4471982" />
         </div>
       </div>
-      <div class="grid grid-cols-2 gap-3">
+      <div class="grid sm:grid-cols-3 gap-4">
         <div>
-          <label class="text-xs text-slate-400">Traveler name</label>
-          <input name="traveler_name" required placeholder="Jane Doe"
-                 class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-accent" />
-        </div>
-        <div>
-          <label class="text-xs text-slate-400">Passport number</label>
-          <input name="passport_number" required placeholder="X1234567"
-                 class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-accent" />
-        </div>
-      </div>
-      <div class="grid grid-cols-3 gap-3">
-        <div>
-          <label class="text-xs text-slate-400">Nationality</label>
-          <select name="nationality" required
-                  class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-accent">
-            <option value="IN" selected>India (IN)</option>
-            <option value="AU">Australia (AU)</option>
-            <option value="BR">Brazil (BR)</option>
-            <option value="CA">Canada (CA)</option>
-            <option value="CN">China (CN)</option>
-            <option value="FR">France (FR)</option>
-            <option value="DE">Germany (DE)</option>
-            <option value="ID">Indonesia (ID)</option>
-            <option value="IT">Italy (IT)</option>
-            <option value="JP">Japan (JP)</option>
-            <option value="MY">Malaysia (MY)</option>
-            <option value="MX">Mexico (MX)</option>
-            <option value="NG">Nigeria (NG)</option>
-            <option value="PK">Pakistan (PK)</option>
-            <option value="RU">Russia (RU)</option>
-            <option value="SG">Singapore (SG)</option>
-            <option value="ZA">South Africa (ZA)</option>
-            <option value="KR">South Korea (KR)</option>
-            <option value="ES">Spain (ES)</option>
-            <option value="LK">Sri Lanka (LK)</option>
-            <option value="CH">Switzerland (CH)</option>
-            <option value="TH">Thailand (TH)</option>
-            <option value="AE">United Arab Emirates (AE)</option>
-            <option value="GB">United Kingdom (GB)</option>
-            <option value="US">United States (US)</option>
-            <option value="VN">Vietnam (VN)</option>
+          <label class="label" for="nationality">Nationality</label>
+          <select id="nationality" name="nationality" required class="input">
+            {% for code, name in countries %}<option value="{{ code }}" {{ 'selected' if code == 'IN' }}>{{ name }} ({{ code }})</option>{% endfor %}
           </select>
         </div>
         <div>
-          <label class="text-xs text-slate-400">Visa status</label>
-          <select name="visa_status" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm">
-            <option value="VALID">VALID</option>
-            <option value="CONDITIONAL">CONDITIONAL</option>
-            <option value="DENIED">DENIED</option>
+          <label class="label" for="visa_status">Visa status</label>
+          <select id="visa_status" name="visa_status" class="input">
+            <option>VALID</option><option>CONDITIONAL</option><option>DENIED</option>
           </select>
         </div>
         <div>
-          <label class="text-xs text-slate-400">Validity (days)</label>
-          <input type="number" name="validity_days" value="90"
-                 class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-accent" />
+          <label class="label" for="validity_days">Validity (days)</label>
+          <input id="validity_days" type="number" name="validity_days" value="90" min="1" max="365" class="input" />
         </div>
       </div>
-      <button type="submit" class="w-full mt-2 bg-accent text-slate-900 font-medium rounded-md py-2 hover:opacity-90 transition">
-        Sign &amp; Anchor Credential
-      </button>
+      <p id="form-error" class="hidden text-sm text-bad" role="alert"></p>
+      <button type="submit" id="issue-button" class="btn btn-primary w-full">Sign and anchor credential</button>
     </form>
   </section>
 
-  <section class="rounded-2xl border border-slate-800 bg-panel p-6">
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="font-semibold">Issued Credentials</h2>
-      <span class="text-xs text-slate-500">registry view -- no PII stored here</span>
+  <section class="card p-6">
+    <div class="flex items-baseline justify-between gap-4 mb-5">
+      <h2 class="text-lg font-semibold tracking-tight">Issued credentials</h2>
+      <span class="text-xs text-muted">Registry view, no personal data</span>
     </div>
-    <div class="space-y-3 max-h-[560px] overflow-y-auto pr-1">
+    <div class="space-y-3 max-h-[34rem] overflow-y-auto pr-1">
       {% for c in issued %}
-      <div class="cred-row border border-slate-800 rounded-lg p-3 text-sm">
-        <div class="flex justify-between items-start">
-          <div>
-            <div class="cred-id font-mono text-xs text-accent">{{ c.credential_id }}</div>
-            <div class="text-slate-400 text-xs">holder: {{ c.holder_did }}</div>
-          </div>
-          <span class="text-xs px-2 py-0.5 rounded-full {{ 'bg-rose-900 text-rose-300' if c.revoked else 'bg-emerald-900 text-emerald-300' }}">
-            {{ 'REVOKED' if c.revoked else 'ACTIVE' }}
-          </span>
+      <div class="cred-row border border-line rounded-lg p-4 flex items-center justify-between gap-4" data-id="{{ c.credential_id }}">
+        <div class="min-w-0">
+          <div class="mono text-sm truncate">{{ c.credential_id }}</div>
+          <div class="text-xs text-muted truncate">{{ c.holder_did }}</div>
         </div>
-        <div class="mt-2 flex gap-2">
-          <button class="revoke-btn text-xs px-3 py-1 rounded-md bg-rose-900/60 hover:bg-rose-900 transition {% if c.revoked %}opacity-40 pointer-events-none{% endif %}">
-            Revoke on-chain
-          </button>
+        <div class="flex items-center gap-3 shrink-0">
+          <span class="badge {{ 'badge-bad' if c.revoked }}">{{ 'Revoked' if c.revoked else 'Active' }}</span>
+          {% if not c.revoked %}<button class="revoke-btn btn btn-sm btn-danger">Revoke</button>{% endif %}
         </div>
       </div>
       {% else %}
-      <p class="text-slate-500 text-sm">No credentials issued yet.</p>
+      <div class="empty">
+        <i class="ph ph-stamp text-3xl block mb-2" aria-hidden="true"></i>
+        Nothing issued yet. Fill in the form to anchor the first credential.
+      </div>
       {% endfor %}
     </div>
   </section>
 </div>
 
-<div id="toast-region" class="fixed right-5 top-20 z-50 w-96 max-w-[calc(100vw-2.5rem)] space-y-3" aria-live="polite" aria-atomic="true"></div>
+<dialog id="overwrite-dialog" class="modal">
+  <h3 class="text-lg font-semibold tracking-tight">Overwrite saved details?</h3>
+  <p class="mt-2 text-sm text-muted">A record for this holder already exists and differs from what you entered. Saving will replace it.</p>
+  <div class="mt-5 flex justify-end gap-2">
+    <button type="button" id="overwrite-cancel" class="btn">Cancel</button>
+    <button type="button" id="overwrite-ok" class="btn btn-primary">Overwrite and issue</button>
+  </div>
+</dialog>
+
+<div id="toast-region" class="fixed right-4 top-20 z-50 w-96 max-w-[calc(100vw-2rem)] space-y-3" aria-live="polite" aria-atomic="true"></div>
 
 <script>
 function showToast(message, type = 'success') {
   const toast = document.createElement('div');
-  const styles = type === 'success'
-    ? 'border-emerald-800 bg-emerald-950 text-emerald-200'
-    : 'border-rose-800 bg-rose-950 text-rose-200';
-  toast.className = `toast border ${styles} rounded-lg px-4 py-3 text-sm shadow-xl`;
-  toast.textContent = message;
+  toast.className = 'toast card px-4 py-3 text-sm flex items-start gap-2';
+  toast.style.borderColor = type === 'success' ? 'var(--accent)' : 'var(--bad)';
+  toast.innerHTML = `<i class="ph ${type === 'success' ? 'ph-check-circle' : 'ph-warning-circle'} text-lg" style="color:${type === 'success' ? 'var(--accent)' : 'var(--bad)'}" aria-hidden="true"></i>`;
+  const text = document.createElement('span');
+  text.textContent = message;
+  toast.append(text);
   document.getElementById('toast-region').appendChild(toast);
   setTimeout(() => toast.remove(), 4500);
 }
 
-// Issuer-side convenience only: autofill a repeat holder's last-known
-// details, and warn before silently overwriting them with something
-// different. See storage.py's module docstring -- this cache is not part
-// of the SSI protocol, just an operator convenience on top of it.
-let holderSnapshot = null; // { did, traveler_name, passport_number, nationality }
-
-const holderDidInput = document.querySelector('input[name="holder_did"]');
-const travelerNameInput = document.querySelector('input[name="traveler_name"]');
-const passportInput = document.querySelector('input[name="passport_number"]');
-const nationalitySelect = document.querySelector('select[name="nationality"]');
+const form = document.getElementById('issue-form');
+const formError = document.getElementById('form-error');
+const holderDidInput = form.elements.holder_did;
 const holderLookupButton = document.getElementById('check-holder-button');
+const holderHint = document.getElementById('holder-hint');
+const issueButton = document.getElementById('issue-button');
+const dialog = document.getElementById('overwrite-dialog');
+
+// Issuer-side convenience only: autofill a returning holder's last-known details
+// and confirm before overwriting them. Not part of the SSI protocol.
+let holderSnapshot = null;
 let holderLookupPending = false;
+
+function setError(msg) {
+  formError.textContent = msg || '';
+  formError.classList.toggle('hidden', !msg);
+}
+
+holderDidInput.addEventListener('input', () => { holderSnapshot = null; });
 
 holderLookupButton.addEventListener('click', async () => {
   const did = holderDidInput.value.trim();
   holderSnapshot = null;
-  if (!did) {
-    showToast('Enter a Holder DID to check.', 'error');
-    return;
-  }
-
+  if (!did) { setError('Enter a holder DID to look up.'); return; }
+  setError('');
   holderLookupPending = true;
   holderLookupButton.disabled = true;
   try {
     const res = await fetch(`/api/holder/${encodeURIComponent(did)}`);
-    if (!res.ok) throw new Error('Holder lookup failed');
+    if (!res.ok) throw new Error('lookup failed');
     const data = await res.json();
     if (holderDidInput.value.trim() !== did) return;
-
     if (data.found) {
-      travelerNameInput.value = data.traveler_name || '';
-      passportInput.value = data.passport_number || '';
-      if (data.nationality) nationalitySelect.value = data.nationality;
+      form.elements.traveler_name.value = data.traveler_name || '';
+      form.elements.passport_number.value = data.passport_number || '';
+      if (data.nationality) form.elements.nationality.value = data.nationality;
       holderSnapshot = {
         did,
         traveler_name: data.traveler_name || '',
         passport_number: data.passport_number || '',
         nationality: data.nationality || '',
       };
-      showToast('Saved DID details loaded.');
+      holderHint.textContent = 'Saved details loaded.';
     } else {
-      showToast('DID details do not exist.', 'error');
+      holderHint.textContent = 'No saved details for this DID. Enter them below.';
     }
   } catch (err) {
-    showToast('Could not check DID details.', 'error');
+    setError('Could not look up this DID.');
   } finally {
     holderLookupPending = false;
     holderLookupButton.disabled = false;
   }
 });
 
-document.getElementById('issue-form').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  if (holderLookupPending) {
-    showToast('Please wait for the DID check to finish.', 'error');
-    return;
-  }
-  const fd = new FormData(e.target);
-  const holderDid = (fd.get('holder_did') || '').trim();
-
-  if (holderSnapshot && holderSnapshot.did === holderDid) {
-    const changed =
-      fd.get('traveler_name') !== holderSnapshot.traveler_name ||
-      fd.get('passport_number') !== holderSnapshot.passport_number ||
-      fd.get('nationality') !== holderSnapshot.nationality;
-    if (changed) {
-      const proceed = confirm(
-        `A record already exists for ${holderDid} and differs from what you've entered ` +
-        `(name/passport/nationality). Save these updated details, overwriting the existing record?`
-      );
-      if (!proceed) return;
-    }
-  }
-
+async function issue(fd) {
+  issueButton.disabled = true;
+  issueButton.textContent = 'Anchoring on-chain...';
   try {
     const res = await fetch('/issue-visa', { method: 'POST', body: fd });
-    const data = await res.json();
+    const data = await res.json().catch(() => ({}));
     if (res.ok) {
-      showToast('Credential issued successfully.');
+      showToast('Credential issued and anchored.');
       setTimeout(() => location.reload(), 1200);
-    } else if (res.status === 409) {
-      showToast(data.detail || 'This holder DID already has an active credential.', 'error');
-    } else {
-      showToast(data.detail || 'Credential issuance failed.', 'error');
+      return;
     }
+    setError(data.detail || 'Credential issuance failed.');
   } catch (err) {
-    showToast('Could not reach the issuer service.', 'error');
+    setError('Could not reach the issuer service.');
   }
+  issueButton.disabled = false;
+  issueButton.textContent = 'Sign and anchor credential';
+}
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  setError('');
+  if (holderLookupPending) { setError('Wait for the lookup to finish.'); return; }
+  if (!form.checkValidity()) { form.reportValidity(); return; }
+  const fd = new FormData(form);
+  const did = (fd.get('holder_did') || '').trim();
+  fd.set('holder_did', did);
+  const changed = holderSnapshot && holderSnapshot.did === did && (
+    fd.get('traveler_name') !== holderSnapshot.traveler_name ||
+    fd.get('passport_number') !== holderSnapshot.passport_number ||
+    fd.get('nationality') !== holderSnapshot.nationality);
+  if (!changed) { issue(fd); return; }
+  dialog.showModal();
+  document.getElementById('overwrite-ok').onclick = () => { dialog.close(); issue(fd); };
 });
+document.getElementById('overwrite-cancel').addEventListener('click', () => dialog.close());
 
 document.querySelectorAll('.revoke-btn').forEach((btn) => {
   btn.addEventListener('click', async () => {
-    const credId = btn.closest('.cred-row').querySelector('.cred-id').textContent.trim();
     const fd = new FormData();
-    fd.append('credential_id', credId);
+    fd.append('credential_id', btn.closest('.cred-row').dataset.id);
+    btn.disabled = true;
     try {
       const res = await fetch('/revoke-visa', { method: 'POST', body: fd });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (res.ok) {
-        showToast('Credential revoked successfully.');
+        showToast('Credential revoked on-chain.');
         setTimeout(() => location.reload(), 1000);
-      } else {
-        showToast(data.detail || 'Credential revocation failed.', 'error');
+        return;
       }
+      showToast(data.detail || 'Revocation failed.', 'error');
     } catch (err) {
       showToast('Could not reach the issuer service.', 'error');
     }
+    btn.disabled = false;
   });
 });
 </script>

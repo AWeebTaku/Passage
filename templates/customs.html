@@ -1,78 +1,65 @@
 {% extends "base.html" %}
-{% block title %}Customs Portal{% endblock %}
+{% block title %}Customs portal{% endblock %}
 {% block content %}
-<h1 class="text-2xl font-bold mb-1">Customs Portal</h1>
-<p class="text-slate-400 text-sm mb-8">
-  Verify a blinded hash commitment against on-chain revocation state --
-  no PII is transmitted or stored here.
-</p>
-
-<div id="verify-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/75 backdrop-blur-sm">
-  <div class="w-full max-w-sm rounded-2xl border border-slate-800 bg-slate-950 p-6 shadow-2xl">
-    <div id="verify-modal-icon" class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full text-xl font-bold"></div>
-    <h3 id="verify-modal-title" class="text-center text-lg font-semibold text-slate-100"></h3>
-    <p id="verify-modal-message" class="mt-2 text-center text-sm text-slate-300"></p>
-    <button id="verify-modal-close" type="button" class="mt-5 w-full rounded-md bg-emerald-400 px-3 py-2 text-sm font-medium text-slate-900 hover:opacity-90 transition">
-      Close
-    </button>
-  </div>
+<div class="mb-8">
+  <h1 class="text-3xl font-semibold tracking-tighter">Customs portal</h1>
+  <p class="mt-2 text-sm text-muted max-w-[60ch]">Check a blinded proof against on-chain state. No personal data is sent or stored here.</p>
 </div>
 
-<div class="grid lg:grid-cols-2 gap-8">
-  <section class="rounded-2xl border border-slate-800 bg-panel p-6">
-    <h2 class="font-semibold mb-4">Submit for Verification</h2>
-    <div class="mb-5 border-b border-slate-800 pb-5">
-      <div class="flex items-center justify-between gap-3 mb-2">
-        <h3 class="text-sm font-medium">Scan wallet proof QR</h3>
-        <button type="button" id="start-scanner" class="px-3 py-1.5 border border-slate-700 rounded-md text-xs text-slate-300 hover:border-emerald-400 hover:text-emerald-300 transition">
-          Start camera
-        </button>
+<dialog id="verify-modal" class="modal text-center">
+  <div id="verify-modal-icon" class="mx-auto mb-4 grid size-12 place-items-center rounded-full text-2xl"></div>
+  <h3 id="verify-modal-title" class="text-lg font-semibold tracking-tight"></h3>
+  <p id="verify-modal-message" class="mt-2 text-sm text-muted"></p>
+  <button id="verify-modal-close" type="button" class="btn btn-primary w-full mt-5">Close</button>
+</dialog>
+
+<div class="grid lg:grid-cols-2 gap-6 items-start">
+  <section class="card p-6">
+    <h2 class="text-lg font-semibold tracking-tight mb-5">Submit a proof</h2>
+
+    <div class="mb-6 pb-6 border-b border-line">
+      <div class="flex items-center justify-between gap-3">
+        <h3 class="text-sm font-medium">Scan the wallet QR</h3>
+        <button type="button" id="start-scanner" class="btn btn-sm"><i class="ph ph-camera" aria-hidden="true"></i> Start camera</button>
       </div>
-      <div id="qr-reader" class="hidden max-w-sm"></div>
-      <label class="block text-xs text-slate-500 mt-3" for="qr-file">Or upload a QR image</label>
-      <input id="qr-file" type="file" accept="image/*"
-             class="mt-1 block w-full text-xs text-slate-400 file:mr-3 file:rounded-md file:border file:border-slate-700 file:bg-slate-900 file:px-3 file:py-2 file:text-xs file:font-medium file:text-slate-200 file:cursor-pointer hover:file:border-emerald-400 hover:file:text-emerald-300" />
-      <p id="scan-status" class="hidden mt-2 text-xs" role="status"></p>
+      <div id="qr-reader" class="hidden max-w-sm mt-3"></div>
+      <label class="label mt-4" for="qr-file">Or upload a QR image</label>
+      <input id="qr-file" type="file" accept="image/*" class="input text-xs file:mr-3 file:border-0 file:bg-transparent file:text-accent file:font-medium file:cursor-pointer" />
+      <p id="scan-status" class="hidden mt-2 text-sm" role="status"></p>
     </div>
-    <form id="verify-form" class="space-y-3">
+
+    <form id="verify-form" class="space-y-4">
       <div>
-        <label class="text-xs text-slate-400">Credential ID</label>
-        <input name="credential_id" required placeholder="vc-..." type="password" autocomplete="off"
-               class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm font-mono focus:outline-none focus:border-emerald-400" />
+        <label class="label" for="credential_id">Credential ID</label>
+        <input id="credential_id" name="credential_id" required placeholder="vc-..." type="password" autocomplete="off" class="input mono" />
       </div>
       <div>
-        <label class="text-xs text-slate-400">Claimed status</label>
-        <select name="claimed_status" required
-                class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-emerald-400">
-          <option value="VALID">VALID</option>
-          <option value="CONDITIONAL">CONDITIONAL</option>
-          <option value="DENIED">DENIED</option>
-          <option value="REVOKED">REVOKED</option>
+        <label class="label" for="claimed_status">Claimed status</label>
+        <select id="claimed_status" name="claimed_status" required class="input">
+          <option>VALID</option><option>CONDITIONAL</option><option>DENIED</option><option>REVOKED</option>
         </select>
       </div>
       <div>
-        <label class="text-xs text-slate-400">Blinded proof hash</label>
-        <input name="proof_hash" required placeholder="SHA256(status + salt) from the Wallet" type="password" autocomplete="off"
-               class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-md px-3 py-2 text-sm font-mono focus:outline-none focus:border-emerald-400" />
+        <label class="label" for="proof_hash">Blinded proof hash</label>
+        <input id="proof_hash" name="proof_hash" required placeholder="SHA256(status + salt) from the wallet" type="password" autocomplete="off" class="input mono" />
+        <p class="mt-1.5 text-xs text-muted">Both fields are masked so a bystander cannot read them.</p>
       </div>
-      <button type="submit" class="w-full mt-2 bg-emerald-400 text-slate-900 font-medium rounded-md py-2 hover:opacity-90 transition">
-        Verify against chain
-      </button>
+      <button type="submit" id="verify-button" class="btn btn-primary w-full">Verify against chain</button>
     </form>
   </section>
 
-  <section class="rounded-2xl border border-slate-800 bg-panel p-6">
-    <h2 class="font-semibold mb-4">Result</h2>
-    <div id="result-placeholder" class="text-slate-500 text-sm">No verification run yet.</div>
+  <section class="card p-6" aria-live="polite">
+    <h2 class="text-lg font-semibold tracking-tight mb-5">Result</h2>
+    <div id="result-placeholder" class="empty">
+      <i class="ph ph-shield-check text-3xl block mb-2" aria-hidden="true"></i>
+      No verification run yet.
+    </div>
+    <div id="result-loading" class="hidden space-y-3" aria-hidden="true">
+      <div class="skeleton h-12"></div><div class="skeleton h-5 w-2/3"></div><div class="skeleton h-5 w-1/2"></div><div class="skeleton h-5 w-3/5"></div>
+    </div>
     <div id="result-card" class="hidden">
-      <div id="result-banner" class="rounded-lg px-4 py-3 mb-4 text-sm font-medium"></div>
-      <dl class="text-sm space-y-1.5">
-        <div class="flex justify-between"><dt class="text-slate-500">Proof valid</dt><dd id="r-proof" class="font-mono"></dd></div>
-        <div class="flex justify-between"><dt class="text-slate-500">Anchored on-chain</dt><dd id="r-anchored" class="font-mono"></dd></div>
-        <div class="flex justify-between"><dt class="text-slate-500">Revoked on-chain</dt><dd id="r-revoked" class="font-mono"></dd></div>
-        <div class="flex justify-between"><dt class="text-slate-500">Expired</dt><dd id="r-expired" class="font-mono"></dd></div>
-        <div class="flex justify-between gap-4"><dt class="text-slate-500 shrink-0">Reason</dt><dd id="r-reason" class="text-right"></dd></div>
-      </dl>
+      <div id="result-banner" class="rounded-lg px-4 py-3 mb-5 text-sm font-medium"></div>
+      <dl id="result-rows" class="text-sm divide-y divide-line"></dl>
     </div>
   </section>
 </div>
@@ -80,94 +67,108 @@
 <script>
 const modal = document.getElementById('verify-modal');
 const modalIcon = document.getElementById('verify-modal-icon');
-const modalTitle = document.getElementById('verify-modal-title');
-const modalMessage = document.getElementById('verify-modal-message');
-const modalClose = document.getElementById('verify-modal-close');
+const verifyButton = document.getElementById('verify-button');
+const $ = (id) => document.getElementById(id);
 
 function showVerificationModal(data) {
-  const verified = Boolean(data.verified);
-  modal.classList.remove('hidden');
-  modal.classList.add('flex');
-  modalIcon.textContent = verified ? '✓' : '!';
-  modalIcon.className = 'mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full text-xl font-bold ' +
-    (verified ? 'bg-emerald-900 text-emerald-300' : 'bg-rose-900 text-rose-300');
-  modalTitle.textContent = verified ? 'Verification successful' : 'Verification failed';
-  modalTitle.className = 'text-center text-lg font-semibold ' + (verified ? 'text-emerald-300' : 'text-rose-300');
-  modalMessage.textContent = verified ? 'Traveler may proceed.' : (data.reason || 'Please review the submitted proof and try again.');
-  modalClose.className = 'mt-5 w-full rounded-md px-3 py-2 text-sm font-medium text-slate-900 hover:opacity-90 transition ' +
-    (verified ? 'bg-emerald-400' : 'bg-rose-400');
+  const ok = Boolean(data.verified);
+  modalIcon.innerHTML = `<i class="ph ${ok ? 'ph-check' : 'ph-x'}" aria-hidden="true"></i>`;
+  modalIcon.style.background = ok ? 'var(--accent-soft)' : 'var(--bad-soft)';
+  modalIcon.style.color = ok ? 'var(--accent)' : 'var(--bad)';
+  $('verify-modal-title').textContent = ok ? 'Verification successful' : 'Verification failed';
+  $('verify-modal-message').textContent = ok ? 'Traveler may proceed.' : (data.reason || 'Review the submitted proof and try again.');
+  modal.showModal();
 }
+$('verify-modal-close').addEventListener('click', () => modal.close());
 
-modalClose.addEventListener('click', () => {
-  modal.classList.add('hidden');
-  modal.classList.remove('flex');
-});
+function showResult(data) {
+  const ok = Boolean(data.verified);
+  const banner = $('result-banner');
+  banner.textContent = ok ? 'Verified. Admit traveler.' : 'Not verified. Flag for manual review.';
+  banner.style.background = ok ? 'var(--accent-soft)' : 'var(--bad-soft)';
+  banner.style.color = ok ? 'var(--accent)' : 'var(--bad)';
+
+  const rows = [
+    ['Proof matches commitment', data.proof_valid, true],
+    ['Anchored on-chain', data.anchored, true],
+    ['Revoked on-chain', data.revoked, false],
+    ['Expired', data.expired, false],
+  ].map(([label, value, good]) => {
+    const row = document.createElement('div');
+    row.className = 'flex justify-between items-center py-2.5';
+    const dt = document.createElement('dt');
+    dt.className = 'text-muted';
+    dt.textContent = label;
+    const dd = document.createElement('dd');
+    dd.className = 'badge ' + (value === null || value === undefined ? '' : (value === good ? '' : 'badge-bad'));
+    dd.textContent = value === null || value === undefined ? 'n/a' : (value ? 'Yes' : 'No');
+    row.append(dt, dd);
+    return row;
+  });
+  const reason = document.createElement('div');
+  reason.className = 'py-2.5 text-muted';
+  reason.textContent = data.reason || '';
+  $('result-rows').replaceChildren(...rows, reason);
+}
 
 async function submitVerification(form) {
-  const fd = new FormData(form);
-  const res = await fetch('/verify-border', { method: 'POST', body: fd });
-  const data = await res.json();
-
-  document.getElementById('result-placeholder').classList.add('hidden');
-  const card = document.getElementById('result-card');
-  card.classList.remove('hidden');
-
-  const banner = document.getElementById('result-banner');
-  banner.textContent = data.verified ? 'VERIFIED -- admit traveler' : 'NOT VERIFIED -- flag for manual review';
-  banner.className = 'rounded-lg px-4 py-3 mb-4 text-sm font-medium ' +
-    (data.verified ? 'bg-emerald-900 text-emerald-300' : 'bg-rose-900 text-rose-300');
-
-  document.getElementById('r-proof').textContent = data.proof_valid;
-  document.getElementById('r-anchored').textContent = data.anchored;
-  document.getElementById('r-revoked').textContent = data.revoked;
-  document.getElementById('r-expired').textContent = data.expired;
-  document.getElementById('r-reason').textContent = data.reason;
-
-  form.reset();
-  form.elements.claimed_status.value = 'VALID';
-  showVerificationModal(data);
-  return data;
+  $('result-placeholder').classList.add('hidden');
+  $('result-card').classList.add('hidden');
+  $('result-loading').classList.remove('hidden');
+  verifyButton.disabled = true;
+  try {
+    const res = await fetch('/verify-border', { method: 'POST', body: new FormData(form) });
+    const data = await res.json().catch(() => ({}));
+    // Error responses carry {detail}, not a verification result.
+    const result = 'verified' in data ? data : { verified: false, reason: data.detail || 'Verification service error.' };
+    showResult(result);
+    form.reset();
+    showVerificationModal(result);
+    return result;
+  } catch (err) {
+    const result = { verified: false, reason: 'Could not reach the verification service.' };
+    showResult(result);
+    showVerificationModal(result);
+    return result;
+  } finally {
+    $('result-loading').classList.add('hidden');
+    $('result-card').classList.remove('hidden');
+    verifyButton.disabled = false;
+  }
 }
 
-document.getElementById('verify-form').addEventListener('submit', async (e) => {
+$('verify-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   await submitVerification(e.target);
 });
 </script>
-<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script>
-const scanStatus = document.getElementById('scan-status');
-const reader = document.getElementById('qr-reader');
+const scanStatus = $('scan-status');
+const reader = $('qr-reader');
 let scanner;
 
 function setScanStatus(message, isError = false) {
   scanStatus.textContent = message;
-  scanStatus.className = 'mt-2 text-xs ' + (isError ? 'text-rose-300' : 'text-emerald-300');
+  scanStatus.className = 'mt-2 text-sm ' + (isError ? 'text-bad' : 'text-accent');
 }
 
 async function applyQrPayload(raw) {
   let payload;
-  try {
-    payload = JSON.parse(raw);
-  } catch (error) {
-    throw new Error('This QR code is not a valid customs proof');
-  }
+  try { payload = JSON.parse(raw); } catch (error) { throw new Error('This QR code is not a customs proof.'); }
   if (payload.version !== 1 || !payload.credential_id || !payload.claimed_status || !payload.proof_hash) {
-    throw new Error('QR code is missing required proof values');
+    throw new Error('QR code is missing required proof values.');
   }
-  const form = document.getElementById('verify-form');
+  const form = $('verify-form');
   form.elements.credential_id.value = payload.credential_id;
   form.elements.claimed_status.value = payload.claimed_status;
   form.elements.proof_hash.value = payload.proof_hash;
-  setScanStatus('QR proof loaded and verifying against chain...');
+  setScanStatus('QR loaded. Verifying against the chain...');
   await submitVerification(form);
 }
 
-document.getElementById('start-scanner').addEventListener('click', async () => {
-  if (!window.Html5Qrcode) {
-    setScanStatus('QR scanner library could not be loaded.', true);
-    return;
-  }
+$('start-scanner').addEventListener('click', async () => {
+  if (!window.Html5Qrcode) { setScanStatus('QR scanner library could not be loaded.', true); return; }
   reader.classList.remove('hidden');
   scanner = new Html5Qrcode('qr-reader');
   try {
@@ -179,28 +180,27 @@ document.getElementById('start-scanner').addEventListener('click', async () => {
           await scanner.stop();
           reader.classList.add('hidden');
           await applyQrPayload(decodedText);
-        } catch (error) {
-          setScanStatus(error.message, true);
-        }
+        } catch (error) { setScanStatus(error.message, true); }
       },
       () => {},
     );
   } catch (error) {
-    setScanStatus('Camera unavailable here. Use the QR image upload instead.', true);
+    reader.classList.add('hidden');
+    setScanStatus('Camera unavailable here. Upload a QR image instead.', true);
   }
 });
 
-document.getElementById('qr-file').addEventListener('change', async (event) => {
+$('qr-file').addEventListener('change', async (event) => {
   const file = event.target.files[0];
   if (!file || !window.Html5Qrcode) return;
   const fileScanner = new Html5Qrcode('qr-reader');
   try {
-    const decodedText = await fileScanner.scanFile(file, true);
-    await applyQrPayload(decodedText);
+    await applyQrPayload(await fileScanner.scanFile(file, true));
   } catch (error) {
     setScanStatus(error.message || 'Could not read this QR image.', true);
   } finally {
     fileScanner.clear();
+    event.target.value = '';
   }
 });
 </script>

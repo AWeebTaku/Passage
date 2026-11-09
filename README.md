@@ -8,8 +8,11 @@ Data Registry**.
 contracts/DidRegistry.sol   Solidity ^0.8.0 registry: DID<->pubkey, revocation ledger
 deploy.py                   Web3.py deployment engine (compiles + deploys to Ganache)
 backend/                    FastAPI controller (issue / revoke / verify) + chain + crypto + storage
-templates/                  Jinja2 + Tailwind dashboards (issuer, wallet, customs, hub)
-static/                     Static assets
+templates/                  Jinja2 + Tailwind pages (landing, issuer, wallet, customs)
+static/                     Shared CSS design tokens and components
+docs/                       Static landing page for GitHub Pages (generated)
+scripts/build_pages.py      Renders templates/index.html into docs/
+tests/                      Validation and page-render checks
 storage/                    Runtime JSON stores (wallets.json, registry.json) -- created automatically
 build/                      Compiled ABI/bytecode + deployment.json -- created by deploy.py
 ```
@@ -244,7 +247,26 @@ On startup the backend automatically registers the issuer DID
 (`did:ssi:issuer:national-visa-authority` by default) on-chain if it isn't
 registered yet.
 
-Open http://127.0.0.1:8000/ for the navigation hub.
+Open http://127.0.0.1:8000/ for the landing page, which links to the three consoles.
+
+### Landing page on GitHub Pages
+
+Pages is static hosting, so only the landing page is published; the consoles
+need the backend and a local chain. Console links on the published page point
+back to this section.
+
+```bash
+python scripts/build_pages.py   # regenerates docs/
+```
+
+Commit `docs/`, then set Settings > Pages > Deploy from branch > `main` / `/docs`.
+
+### Tests
+
+```bash
+pip install httpx pytest
+python -m pytest tests
+```
 
 ## 5. End-to-end verification flow
 
