@@ -1,4 +1,6 @@
-# SSI / ZKP Cross-Border Travel Verification System
+# Passage
+
+SSI / ZKP cross-border travel verification system.
 
 A working demo of a **tripartite trust model** (Issuer &rarr; Holder/Wallet &rarr;
 Verifier/Customs) anchored to an EVM smart contract acting as a **Verifiable
@@ -264,8 +266,8 @@ Commit `docs/`, then set Settings > Pages > Deploy from branch > `main` / `/docs
 ### Tests
 
 ```bash
-pip install httpx pytest
-python -m pytest tests
+pip install httpx
+python tests/test_app.py   # run from the project root; prints "ok"
 ```
 
 ## 5. End-to-end verification flow

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Prove visa status without sharing passport data | Passage</title>
 <meta name="description" content="Passage: verify visa status at the border with a hash commitment anchored on an EVM registry. No passport data leaves the traveler's wallet." />
+<link rel="icon" href="static/favicon.svg" type="image/svg+xml" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -39,7 +40,7 @@
       <a href="#privacy" class="hover:text-fg transition">Who sees what</a>
       <a href="#limits" class="hover:text-fg transition">Limits</a>
     </nav>
-    <a href="https://github.com/AWeebTaku/SSI-ZKP-System#4-run-the-backend" class="btn btn-primary">Run it locally</a>
+    <a href="https://github.com/AWeebTaku/Passage#4-run-the-backend" class="btn btn-primary">Run it locally</a>
   </div>
 </header>
 
@@ -54,7 +55,7 @@
         Travelers hold the credential. Customs checks a hash against the chain. No passport data leaves the wallet.
       </p>
       <div class="rise mt-8 flex flex-wrap gap-3" style="--i:2">
-        <a href="https://github.com/AWeebTaku/SSI-ZKP-System#4-run-the-backend" class="btn btn-primary">Run it locally <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
+        <a href="https://github.com/AWeebTaku/Passage#4-run-the-backend" class="btn btn-primary">Run it locally <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
         <a href="#how" class="btn">How it works</a>
       </div>
     </div>
@@ -139,7 +140,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-20 md:py-28">
       <h2 class="reveal text-3xl md:text-4xl font-semibold tracking-tighter leading-tight max-w-[22ch]">Three consoles, one trust model</h2>
       <div class="mt-12 grid md:grid-cols-6 gap-4">
-        <a href="https://github.com/AWeebTaku/SSI-ZKP-System#4-run-the-backend" class="reveal group md:col-span-4 rounded-xl p-8 md:p-10 flex flex-col justify-between min-h-[18rem] transition hover:-translate-y-0.5" style="background:var(--accent);color:var(--on-accent)">
+        <a href="https://github.com/AWeebTaku/Passage#4-run-the-backend" class="reveal group md:col-span-4 rounded-xl p-8 md:p-10 flex flex-col justify-between min-h-[18rem] transition hover:-translate-y-0.5" style="background:var(--accent);color:var(--on-accent)">
           <i class="ph ph-stamp text-4xl" aria-hidden="true"></i>
           <div>
             <h3 class="text-2xl font-semibold tracking-tight">Issuer console</h3>
@@ -147,7 +148,7 @@
             <span class="mt-5 inline-flex items-center gap-2 font-medium">Open issuer <i class="ph ph-arrow-right transition group-hover:translate-x-1" aria-hidden="true"></i></span>
           </div>
         </a>
-        <a href="https://github.com/AWeebTaku/SSI-ZKP-System#4-run-the-backend" class="reveal group md:col-span-2 card p-8 flex flex-col justify-between min-h-[18rem] transition hover:-translate-y-0.5">
+        <a href="https://github.com/AWeebTaku/Passage#4-run-the-backend" class="reveal group md:col-span-2 card p-8 flex flex-col justify-between min-h-[18rem] transition hover:-translate-y-0.5">
           <i class="ph ph-wallet text-4xl text-accent" aria-hidden="true"></i>
           <div>
             <h3 class="text-2xl font-semibold tracking-tight">Traveler wallet</h3>
@@ -155,17 +156,15 @@
             <span class="mt-5 inline-flex items-center gap-2 font-medium text-accent">Open wallet <i class="ph ph-arrow-right transition group-hover:translate-x-1" aria-hidden="true"></i></span>
           </div>
         </a>
-        <a href="https://github.com/AWeebTaku/SSI-ZKP-System#4-run-the-backend" class="reveal group md:col-span-6 card overflow-hidden grid md:grid-cols-2 transition hover:-translate-y-0.5">
-          <div class="p-8 md:p-10 flex flex-col justify-between gap-8">
+        <a href="https://github.com/AWeebTaku/Passage#4-run-the-backend" class="reveal group md:col-span-6 card p-8 md:p-10 flex flex-wrap items-center justify-between gap-8 transition hover:-translate-y-0.5" style="background:var(--sunken)">
+          <div class="flex items-start gap-5">
             <i class="ph ph-shield-check text-4xl text-accent" aria-hidden="true"></i>
             <div>
               <h3 class="text-2xl font-semibold tracking-tight">Customs portal</h3>
-              <p class="mt-2 text-muted max-w-[44ch]">Scan a proof QR or paste the values. The result comes straight from the registry contract.</p>
-              <span class="mt-5 inline-flex items-center gap-2 font-medium text-accent">Open customs <i class="ph ph-arrow-right transition group-hover:translate-x-1" aria-hidden="true"></i></span>
+              <p class="mt-2 text-muted max-w-[52ch]">Scan a proof QR or paste the values. The result comes straight from the registry contract.</p>
             </div>
           </div>
-          <img src="https://picsum.photos/seed/airport-passport-control/960/540" width="960" height="540" loading="lazy"
-               alt="Travelers queueing at an airport passport control hall" class="w-full h-56 md:h-full object-cover" />
+          <span class="inline-flex items-center gap-2 font-medium text-accent">Open customs <i class="ph ph-arrow-right transition group-hover:translate-x-1" aria-hidden="true"></i></span>
         </a>
       </div>
     </div>
@@ -305,7 +304,7 @@
   <section class="border-t border-line">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 py-20 md:py-24 flex flex-wrap items-center justify-between gap-6">
       <h2 class="text-3xl md:text-4xl font-semibold tracking-tighter leading-tight max-w-[20ch]">Issue a credential and check it at the gate</h2>
-      <a href="https://github.com/AWeebTaku/SSI-ZKP-System#4-run-the-backend" class="btn btn-primary">Run it locally <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
+      <a href="https://github.com/AWeebTaku/Passage#4-run-the-backend" class="btn btn-primary">Run it locally <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
     </div>
   </section>
 </main>
@@ -314,9 +313,9 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex flex-wrap items-center justify-between gap-4 text-sm text-muted">
     <span>Passage, a self-sovereign identity demo on an EVM registry.</span>
     <nav class="flex gap-5" aria-label="Consoles">
-      <a href="https://github.com/AWeebTaku/SSI-ZKP-System#4-run-the-backend" class="hover:text-fg transition">Issuer</a>
-      <a href="https://github.com/AWeebTaku/SSI-ZKP-System#4-run-the-backend" class="hover:text-fg transition">Wallet</a>
-      <a href="https://github.com/AWeebTaku/SSI-ZKP-System#4-run-the-backend" class="hover:text-fg transition">Customs</a>
+      <a href="https://github.com/AWeebTaku/Passage#4-run-the-backend" class="hover:text-fg transition">Issuer</a>
+      <a href="https://github.com/AWeebTaku/Passage#4-run-the-backend" class="hover:text-fg transition">Wallet</a>
+      <a href="https://github.com/AWeebTaku/Passage#4-run-the-backend" class="hover:text-fg transition">Customs</a>
     </nav>
   </div>
 </footer>

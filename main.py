@@ -1,4 +1,4 @@
-"""Start the local SSI/ZKP demo with one command.
+"""Start the local Passage demo with one command.
 
 Usage:
     python main.py

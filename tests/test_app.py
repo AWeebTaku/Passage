@@ -1,4 +1,7 @@
-"""Run: python -m pytest tests  (or python tests/test_app.py). Validation fires before any chain call."""
+"""Run from the project root: python tests/test_app.py (needs httpx). Validation fires before any chain call."""
+import os, sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from fastapi.testclient import TestClient
 from backend.main import app, _is_expired
 
