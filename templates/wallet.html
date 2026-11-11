@@ -55,6 +55,7 @@
           <i class="ph ph-fingerprint" aria-hidden="true"></i> Compute proof
         </button>
         <button type="button" class="show-qr-btn btn hidden"><i class="ph ph-qr-code" aria-hidden="true"></i> Show QR</button>
+        <a class="btn" href="/api/credential/{{ c.credential_id }}/vc" download="{{ c.credential_id }}.vc.json" title="W3C VC 2.0 JSON-LD, without the salt"><i class="ph ph-download-simple" aria-hidden="true"></i> Export VC</a>
       </div>
       <div class="proof-output hidden mt-4 text-sm bg-sunken border border-line rounded-lg p-4 space-y-2" aria-live="polite"></div>
 

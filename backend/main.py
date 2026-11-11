@@ -18,7 +18,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from backend import chain, crypto_utils, storage
+from backend import chain, crypto_utils, storage, vc
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -148,6 +148,16 @@ def lookup_holder(holder_did: str):
     if record is None:
         return JSONResponse({"found": False})
     return JSONResponse({"found": True, **record})
+
+
+@app.get("/api/credential/{credential_id}/vc")
+def credential_as_vc(credential_id: str):
+    """Holder-side export of one wallet credential as a W3C VC 2.0 JSON-LD document (no salt)."""
+    for creds in storage.read_wallets().values():
+        for c in creds:
+            if c["credential_id"] == credential_id:
+                return JSONResponse(vc.to_vc(c), media_type="application/vc+ld+json")
+    raise HTTPException(status_code=404, detail="Unknown credential_id")
 
 
 @app.post("/issue-visa")

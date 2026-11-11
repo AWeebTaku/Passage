@@ -1,6 +1,16 @@
 # Passage
 
-SSI / ZKP cross-border travel verification system.
+Cross-border visa verification with selective disclosure, built as a self-sovereign identity demo.
+
+> **This is not a zero-knowledge proof system.** It uses a salted SHA-256 hash
+> commitment for selective disclosure and an HMAC-SHA256 issuer signature
+> (symmetric, so verifiers cannot check it). Proofs can be replayed, and the status
+> label is not cryptographically bound. See [THREAT_MODEL.md](THREAT_MODEL.md)
+> for exactly what each party learns and what is not protected.
+
+**Quick start:** `pip install -r requirements.txt && npm install && python main.py`,
+then open http://127.0.0.1:8000/ (Ganache, deployment and the app start together;
+details in section 2).
 
 A working demo of a **tripartite trust model** (Issuer &rarr; Holder/Wallet &rarr;
 Verifier/Customs) anchored to an EVM smart contract acting as a **Verifiable
@@ -14,7 +24,8 @@ templates/                  Jinja2 + Tailwind pages (landing, issuer, wallet, cu
 static/                     Design tokens (styles.css), landing motion (landing.css), favicon
 docs/                       Static landing page for GitHub Pages (generated)
 scripts/build_pages.py      Renders templates/index.html into docs/
-tests/                      Validation and page-render checks
+tests/                      Backend, contract and VC-export tests (pytest)
+THREAT_MODEL.md             What each party learns, known attacks and limitations
 storage/                    Runtime JSON stores (wallets.json, registry.json) -- created automatically
 build/                      Compiled ABI/bytecode + deployment.json -- created by deploy.py
 ```
@@ -281,9 +292,15 @@ Commit `docs/`, then set Settings > Pages > Deploy from branch > `main` / `/docs
 ### Tests
 
 ```bash
-pip install httpx
-python tests/test_app.py   # run from the project root; prints "ok"
+pip install httpx pytest
+python main.py              # leave running in another terminal
+python -m pytest -q
 ```
+
+Without the stack running, the 16 chain-backed tests skip and only the validation
+and page-render tests run. Chain tests use throwaway storage, so they never touch
+your real wallets or registry. Two tests pin known limitations (replay, unbound
+label); if you fix those, the tests are meant to fail and be inverted.
 
 ## 5. End-to-end verification flow
 
@@ -345,6 +362,9 @@ curl -X POST http://127.0.0.1:8000/verify-border \
   -F claimed_status="VALID" \
   -F proof_hash="<sha256 hex digest>"
 
+# Export a wallet credential as a W3C VC 2.0 JSON-LD document (no salt)
+curl http://127.0.0.1:8000/api/credential/vc-XXXXXXXX/vc
+
 # Register an arbitrary DID
 curl -X POST http://127.0.0.1:8000/register-did \
   -F did="did:ssi:holder:another-traveler" \
@@ -363,6 +383,10 @@ curl -X POST http://127.0.0.1:8000/register-did \
   `keccak256` credential hashes. No PII, no commitments in plaintext.
 
 ## 8. Known limitations (read before treating this as production)
+
+The full list, with the test that pins each one, is in [THREAT_MODEL.md](THREAT_MODEL.md).
+The VC export is shape-only: `did:ssi:*` is not a registered DID method and the proof
+is the issuer HMAC, not a Data Integrity or JWS proof.
 
 - **HMAC vs asymmetric signatures**: see the design note in Section 1 -- the
   Customs verifier deliberately does not re-check the HMAC signature (it
