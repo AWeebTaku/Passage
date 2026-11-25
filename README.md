@@ -14,6 +14,8 @@ Cross-border visa verification with selective disclosure, built as a self-sovere
 |---|---|---|
 | ![Issuer console](docs/screenshots/issuer.png) | ![Traveler wallet](docs/screenshots/wallet.png) | ![Customs portal](docs/screenshots/customs.png) |
 
+**Live demo:** https://passage-demo.onrender.com (free tier: the first load after idle takes about a minute; no login, so use made-up data).
+
 **Quick start:** `pip install -r requirements.txt && npm install && python main.py`,
 then open http://127.0.0.1:8000/ (Ganache, deployment and the app start together;
 details in section 2).
@@ -239,7 +241,8 @@ docker build -t passage-demo . && docker run --rm -p 8000:8000 passage-demo
 ```
 
 On Render: New > Blueprint > select this repo. It generates a random `ISSUER_HMAC_SECRET`.
-The free plan sleeps when idle and takes about a minute to wake. A public testnet would
+The free plan sleeps when idle and takes about a minute to wake. The deployed instance is
+https://passage-demo.onrender.com and the Pages landing page links to it. A public testnet would
 need `backend/chain.py` to sign transactions itself, which is not done.
 
 ## 3. Manual commands (optional)
