@@ -1,5 +1,7 @@
 # Passage
 
+[![ci](https://github.com/AWeebTaku/Passage/actions/workflows/ci.yml/badge.svg)](https://github.com/AWeebTaku/Passage/actions/workflows/ci.yml)
+
 Cross-border visa verification with selective disclosure, built as a self-sovereign identity demo.
 
 > **This is not a zero-knowledge proof system.** It uses a salted SHA-256 hash
@@ -7,6 +9,10 @@ Cross-border visa verification with selective disclosure, built as a self-sovere
 > (symmetric, so verifiers cannot check it). Proofs can be replayed, and the status
 > label is not cryptographically bound. See [THREAT_MODEL.md](THREAT_MODEL.md)
 > for exactly what each party learns and what is not protected.
+
+| Issuer | Wallet | Customs |
+|---|---|---|
+| ![Issuer console](docs/screenshots/issuer.png) | ![Traveler wallet](docs/screenshots/wallet.png) | ![Customs portal](docs/screenshots/customs.png) |
 
 **Quick start:** `pip install -r requirements.txt && npm install && python main.py`,
 then open http://127.0.0.1:8000/ (Ganache, deployment and the app start together;
@@ -221,6 +227,21 @@ Use `--skip-deploy` only when the current Ganache instance still contains the
 contract recorded in `build/deployment.json`. A fresh or restarted Ganache
 instance requires the default deployment step again.
 
+### 2.6 Hosted demo (Docker or Render)
+
+The repo ships a `Dockerfile` (Python, Node, Ganache and the app in one container, so the
+chain is embedded) and a `render.yaml` blueprint. With `PASSAGE_DEMO=1` every page shows a
+banner that the demo has no login. State lives in memory and on the container disk, so a
+restart gives a fresh chain.
+
+```bash
+docker build -t passage-demo . && docker run --rm -p 8000:8000 passage-demo
+```
+
+On Render: New > Blueprint > select this repo. It generates a random `ISSUER_HMAC_SECRET`.
+The free plan sleeps when idle and takes about a minute to wake. A public testnet would
+need `backend/chain.py` to sign transactions itself, which is not done.
+
 ## 3. Manual commands (optional)
 
 The one-command launcher is recommended. For manual operation, run Ganache
@@ -381,6 +402,22 @@ curl -X POST http://127.0.0.1:8000/register-did \
   salts.
 - `DidRegistry.sol` (on-chain) -- only DIDs, public keys, and opaque
   `keccak256` credential hashes. No PII, no commitments in plaintext.
+
+## 7b. Threat model summary
+
+Full version with the test behind each row: [THREAT_MODEL.md](THREAT_MODEL.md).
+
+| Data | Issuer | Wallet | Customs | Chain |
+|---|---|---|---|---|
+| Name, passport, nationality | yes | yes | no | no |
+| Blinding salt | at issuance only | yes | no | no |
+| Status commitment | yes | yes | yes | only its keccak hash |
+| Revocation state | yes | yes | yes | yes |
+
+Rejected, with tests: tampered proofs, proofs for a status you were not issued, wrong
+salts, revoked credentials, non-controller anchoring or revoking. **Accepted, by design
+of a plain hash commitment:** replayed proofs, and a VALID proof shown under a different
+label. Treat the label as display text.
 
 ## 8. Known limitations (read before treating this as production)
 

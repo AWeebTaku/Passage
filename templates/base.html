@@ -62,6 +62,11 @@
     </div>
     {% endif %}
   </header>
+  {% if demo_mode %}
+  <div class="border-b border-line text-center text-xs py-2 px-4" style="background:var(--warn-soft);color:var(--warn)" role="note">
+    Public demo with no login. Anyone can issue or revoke here, so use made-up data only. The chain resets when the server restarts.
+  </div>
+  {% endif %}
   <main class="max-w-6xl mx-auto px-4 sm:px-6 py-10">
     {% block content %}{% endblock %}
   </main>

@@ -63,6 +63,10 @@ def _is_expired(expiry_at: str) -> bool:
         return False
 
 
+DEMO_MODE = os.environ.get("PASSAGE_DEMO") == "1"
+templates.env.globals["demo_mode"] = DEMO_MODE
+
+
 def _chain_status() -> dict:
     try:
         connected = chain.get_w3().is_connected()
@@ -389,7 +393,7 @@ def verify_border(
         elif not proof_valid:
             result["reason"] = "Blinded proof does not match issuer commitment -- status assertion rejected."
         else:
-            result["reason"] = "Zero-knowledge status assertion verified against on-chain state."
+            result["reason"] = "Status commitment matches and the credential is active on-chain."
 
         result["verified"] = bool(proof_valid and anchored_onchain and not revoked_onchain and not expired)
 

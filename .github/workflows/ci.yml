@@ -1,0 +1,29 @@
+name: ci
+on:
+  push: { branches: [main] }
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - uses: actions/setup-node@v4
+        with: { node-version: "20", cache: npm }
+      - run: pip install -r requirements.txt httpx pytest
+      - run: npm ci
+      - name: Start Ganache, deploy the contract and run the app
+        run: |
+          nohup python main.py --host 127.0.0.1 > app.log 2>&1 &
+          for i in $(seq 1 90); do curl -sf http://127.0.0.1:8000/ >/dev/null && exit 0; sleep 2; done
+          cat app.log; exit 1
+      - run: python -m pytest -q -W ignore
+      - name: Fail if the Pages build is stale
+        run: |
+          python scripts/build_pages.py
+          git diff --exit-code docs/ || (echo "Run python scripts/build_pages.py and commit docs/" && exit 1)
+      - if: failure()
+        run: cat app.log

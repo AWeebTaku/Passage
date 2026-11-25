@@ -1,0 +1,12 @@
+# Render blueprint: New > Blueprint > pick this repo.
+services:
+  - type: web
+    name: passage-demo
+    runtime: docker
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: ISSUER_HMAC_SECRET
+        generateValue: true
+      - key: PASSAGE_DEMO
+        value: "1"

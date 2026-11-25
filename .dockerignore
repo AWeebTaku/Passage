@@ -1,0 +1,12 @@
+.git
+.venv
+node_modules
+__pycache__
+.env
+.claude_session
+.impeccable
+.pytest_cache
+storage/*.json
+build/*
+!build/.gitkeep
+docs
