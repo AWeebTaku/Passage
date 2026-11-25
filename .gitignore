@@ -23,3 +23,6 @@ storage/*
 .idea/
 .DS_Store
 *.log
+
+# Private planning notes, kept local.
+PLAN.md

@@ -1,7 +1,7 @@
 # Demo image: Ganache (embedded chain), the deployed contract and the app in one container.
 # State is in memory and on the container disk, so a restart gives a clean demo.
 FROM python:3.12-slim
-RUN apt-get update && apt-get install -y --no-install-recommends nodejs npm curl \
+RUN apt-get update && apt-get install -y --no-install-recommends nodejs npm curl gcc libc6-dev \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY requirements.txt package.json package-lock.json ./
