@@ -1,6 +1,8 @@
 # Passage
 
-[![ci](https://github.com/AWeebTaku/Passage/actions/workflows/ci.yml/badge.svg)](https://github.com/AWeebTaku/Passage/actions/workflows/ci.yml)
+<!-- badges:start -->
+[![CI](https://github.com/AWeebTaku/Passage/actions/workflows/ci.yml/badge.svg)](https://github.com/AWeebTaku/Passage/actions/workflows/ci.yml) [![Release](https://img.shields.io/github/v/release/AWeebTaku/Passage?display_name=tag)](https://github.com/AWeebTaku/Passage/releases/latest) [![License](https://img.shields.io/badge/license-MIT-green)](https://github.com/AWeebTaku/Passage/blob/main/LICENSE) ![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white) ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white) ![Solidity](https://img.shields.io/badge/Solidity-363636?logo=solidity&logoColor=white)
+<!-- badges:end -->
 
 Cross-border visa verification with selective disclosure, built as a self-sovereign identity demo.
 
